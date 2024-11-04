@@ -1,0 +1,20 @@
+{% extends 'template.html.twig' %}
+
+{% block body %}
+{% include "nav.html.twig" %}
+
+<div class="container" id="reservation">
+    <a href="{{ path('app_product') }}" class="p-5"><i class="fa fa-arrow-left"></i> Retour</a>
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-8">
+            <div class="col-lg-12 text-center text-light mb-5">
+                <h2>Modifier des Produits</h2>
+            </div>
+            {% include "product/_form.html.twig" %}
+        </div>
+    </div>
+</div>
+
+
+{% include "footer.html.twig" %}
+{% endblock %}

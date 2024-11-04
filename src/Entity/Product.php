@@ -16,26 +16,40 @@ class Product
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(
+        message: 'Veuillez entrer le nom de produit.'
+    )]
     #[Assert\Length(
         min: 2,
         max: 50,
-        minMessage: 'Le nom de produit devrait être minimun {{ limit }} characters',
-        maxMessage: 'Le nom de produit ne doit pas dépasser {{ limit }} characters',
+        minMessage: '2 caractères minimum.',
+        maxMessage: '50 caractères maximum.'
     )]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: '255 caractères maximum.'
+    )]
     private ?string $description = null;
 
     #[ORM\Column]
-    #[Assert\Positive]
-    #[Assert\NotNull]
+    #[Assert\Positive(
+        message: 'Veuillez entrer un prix correct.'
+    )]
+    #[Assert\NotNull(
+        message: 'Veuillez entrer le prix.'
+    )]
     private ?float $price = null;
 
     #[ORM\Column]
-    #[Assert\PositiveOrZero]
-    #[Assert\NotNull]
+    #[Assert\PositiveOrZero(
+        message: 'Veuillez entrer le stock.'
+    )]
+    #[Assert\NotNull(
+        message: 'Veuillez entrer le stock.'
+    )]
     private ?int $stock = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -43,6 +57,9 @@ class Product
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $UpdateAt = null;
 
     public function getId(): ?int
     {
@@ -125,5 +142,23 @@ class Product
     public function setCreatedAtValue(): void
     {
         $this->createdAt = new \DateTimeImmutable();
+    }
+
+    public function getUpdateAt(): ?\DateTimeImmutable
+    {
+        return $this->UpdateAt;
+    }
+
+    public function setUpdateAt(?\DateTimeImmutable $UpdateAt): static
+    {
+        $this->UpdateAt = $UpdateAt;
+
+        return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function setUpdateAtValue(): void
+    {
+        $this->UpdateAt = new \DateTimeImmutable();
     }
 }

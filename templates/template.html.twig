@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <title>Kaëlysse Couture</title>
+    <title>{% block title %}Kaëlysse Couture{% endblock %}</title>
 <!--
     
 TemplateMo 558 Klassy Cafe
@@ -28,15 +28,7 @@ https://templatemo.com/tm-558-klassy-cafe
     </head>
 
     <body>
-         <!-- ***** Preloader Start ***** -->
-        <div id="preloader">
-            <div class="jumper">
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>  
-        <!-- ***** Preloader End ***** -->
+        
         {% block body %}{% endblock %}
                  
     </body>
@@ -61,8 +53,8 @@ https://templatemo.com/tm-558-klassy-cafe
     <script src="{{ asset('assets/js/isotope.js') }}"></script> 
 
     <!-- Global Init -->
-    <script src="{{ asset('assets/js/custom.js') }}"></script>
-    <script>
+    <script src="{{ asset('assets/js/custom.js') }}"></script> 
+    <script> 
 
         $(function() {
             var selectedClass = "";
@@ -78,5 +70,9 @@ https://templatemo.com/tm-558-klassy-cafe
             });
         });
 
+
     </script>
+        {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
 </html>

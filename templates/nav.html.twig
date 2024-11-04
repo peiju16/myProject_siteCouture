@@ -6,13 +6,13 @@
                     <nav class="main-nav">
                         <!-- ***** Logo Start ***** -->
                         <a href="{{ path('app_home') }}" class="logo">
-                            <img src="assets/images/klassy-logo.png" align="klassy cafe html template">
+                            <img src="#" align="klassy cafe html template">
                         </a>
                         <!-- ***** Logo End ***** -->
                         <!-- ***** Menu Start ***** -->
                         <ul class="nav">
-                            <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
-                            <li class="scroll-to-section"><a href="#about">About</a></li>
+                            <li class="scroll-to-section"><a href="#top" class="active">Accueil</a></li>
+                            <li class="scroll-to-section"><a href="#about">À propos</a></li>
                            	
                         <!-- 
                             <li class="submenu">
@@ -24,10 +24,16 @@
                                 </ul>
                             </li>
                         -->
-                            <li class="scroll-to-section"><a href="#menu">Menu</a></li>
-                            <li class="scroll-to-section"><a href="#chefs">Chefs</a></li> 
+                            <li class="scroll-to-section"><a href="#menu">Services</a></li>
                             <li class="submenu">
-                                <a href="javascript:;">Features</a>
+                                <a href="javascript:;">Nos produits</a>
+                                <ul>
+                                    <li><a href="{{ path('app_product') }}">Nos produits</a></li>
+                                    <li><a href="#">Nos formations</a></li>
+                                </ul>
+                            </li>
+                            <li class="submenu">
+                                <a href="javascript:;">Back Office</a>
                                 <ul>
                                     <li><a href="#">Features Page 1</a></li>
                                     <li><a href="#">Features Page 2</a></li>
@@ -36,7 +42,7 @@
                                 </ul>
                             </li>
                             <!-- <li class=""><a rel="sponsored" href="https://templatemo.com" target="_blank">External URL</a></li> -->
-                            <li class="scroll-to-section"><a href="#reservation">Contact Us</a></li> 
+                            <li class="scroll-to-section"><a href="#reservation">Contactez-nous</a></li> 
                         </ul>        
                         <a class='menu-trigger'>
                             <span>Menu</span>

@@ -1,0 +1,79 @@
+{% extends 'template.html.twig' %}
+
+{% block body %}
+{% include "nav.html.twig" %}
+<!-- ***** Chefs Area Starts ***** -->
+
+<section class="section" id="chefs">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 offset-lg-4 text-center">
+                <div class="section-heading">
+                    <h6>Nos Produits</h6>
+                    <h2>Des créations de mon atelier</h2>
+                </div>
+            </div>
+        </div>
+        <div class="mb-3 d-flex justify-content-end">
+            <a href=" {{ path('app_product_new') }}" id="new-product" class="main-button-icon">Créer un nouveau produit</a>
+        </div>
+        {{ include('flash.html.twig') }}
+        {% if produits %} 
+        <div class="row">
+            {% for produit in produits %}
+            <div class="col-lg-4">
+                <div class="chef-item">
+                    <div class="thumb">
+                        <div class="overlay"></div>
+                        <ul class="social-icons">
+                            <li><a href="{{ path('app_product_show', { id: produit.id }) }}"><i class="fa fa-eye"></i></a></li>
+                            <li><a href="{{ path('app_product_edit', { id: produit.id }) }}"><i class="fa fa-pencil"></i></a></li>
+                            <li><a href="#" data-toggle="modal" data-target="#deleteModal" 
+                                data-id="{{ produit.id }}" data-name="{{ produit.name }}" class="delete-button"><i class="fa fa-trash"></i></a></li>
+                        </ul>
+                        <a href="#"><img src="assets/images/chefs-01.jpg" alt="Chef #1"></a>
+                    </div>
+                    <div class="down-content">
+                        <h4>{{produit.name}}</h4>
+                        <span>{{produit.price}}€</span>
+                        {# pour date : produit.created_at|date('d/m/Y') #}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+  
+        <div class="navigation d-flex justify-content-center mt-4">
+            {{ knp_pagination_render(produits) }}
+        </div>
+        {% else %}
+        <div>Il n'y a pas de produits</div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title fs-5" id="exampleModalLabel">Confirmation de suppression</h3>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+          <span aria-hidden="true">&times;</span>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+          {# <a href="#" id="confirmDeleteBtn" class="btn btn-primary" tabindex="-1" role="button">Confirmer</a> #}
+          <button type="button" class="btn btn-primary confirm-delete">Confirmer</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<!-- ***** Chefs Area Ends ***** -->
+{% include "footer.html.twig" %}
+{% endblock %}
+

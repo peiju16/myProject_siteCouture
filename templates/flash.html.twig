@@ -1,0 +1,17 @@
+<div class= "row text-center justify-content-center">
+    <div class="col-6 align-self-center">
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+        {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+        {{ message }}
+        </div>
+    {% endfor %}
+    </div>
+</div>
+
+
