@@ -2,8 +2,9 @@
 
 namespace App\Form;
 
-use App\Entity\Product;
+use App\Entity\Formation;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -11,41 +12,40 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints\PositiveOrZero;
 
-class ProductType extends AbstractType
+class FormationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class, [
-                'attr' => [
-                    'minlength' => '2',
-                    'maxlength' => '50'
-                ],
-                'label' => 'Nom',
+        ->add('name', TextType::class, [
+            'attr' => [
+                'minlength' => '2',
+                'maxlength' => '255'
+            ],
+            'label' => 'Nom',
+            'label_attr' => [
+                'class' => 'text-light'
+            ],
+        ])
+        ->add('description', TextareaType::class, [
+            'attr' => [
+                'maxlength' => '255'
+            ],
+            'label' => 'Description',
+            'label_attr' => [
+                'class' => 'text-light'
+            ],
+        ])
+            ->add('date', DateTimeType::class,[
+                'widget' => 'single_text',
+                'label' => 'Date de formation',
                 'label_attr' => [
                     'class' => 'text-light'
                 ],
             ])
-            ->add('description', TextareaType::class, [
-                'attr' => [
-                    'maxlength' => '255'
-                ],
-                'label' => 'Description',
-                'label_attr' => [
-                    'class' => 'text-light'
-                ],
-            ])
-            ->add('price', MoneyType::class, [
-                'label' => 'Prix',
-                'label_attr' => [
-                    'class' => 'text-light'
-                ],
-            ])
-            ->add('stock', IntegerType::class, [
-                'label' => 'Stock',
+            ->add('nbr_Place', IntegerType::class, [
+                'label' => 'Nombre de Place',
                 'label_attr' => [
                     'class' => 'text-light'
                 ],
@@ -54,8 +54,14 @@ class ProductType extends AbstractType
                     'step' => 1, // Ensures input steps in integers only
                 ],
             ])
-
             //->add('picture')
+
+            ->add('price', MoneyType::class, [
+                'label' => 'Prix',
+                'label_attr' => [
+                    'class' => 'text-light'
+                ],
+            ])
 
             ->add('submit', SubmitType::class,[
                 'label' => 'Submit',
@@ -63,14 +69,13 @@ class ProductType extends AbstractType
                     'class' => 'mt-3'
                 ]
             ])
-           
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Product::class,
+            'data_class' => Formation::class,
         ]);
     }
 }

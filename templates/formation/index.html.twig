@@ -9,34 +9,34 @@
         <div class="row">
             <div class="col-lg-4 offset-lg-4 text-center">
                 <div class="section-heading">
-                    <h6>Nos Produits</h6>
-                    <h2>Des créations de mon atelier</h2>
+                    <h6>Nos Formations</h6>
+                    <h2>Des cours que nous vous proposez</h2>
                 </div>
             </div>
         </div>
         <div class="mb-3 d-flex justify-content-end">
-            <a href=" {{ path('app_product_new') }}" id="new-btn" class="main-button-icon">Créer un nouveau produit</a>
+            <a href=" {{ path('app_formation_new') }}" id="new-btn" class="main-button-icon">Créer un nouveau formation</a>
         </div>
         {{ include('flash.html.twig') }}
-        {% if produits %} 
+        {% if formations %} 
         <div class="row">
-            {% for produit in produits %}
+            {% for formation in formations %}
             <div class="col-lg-4">
                 <div class="chef-item">
                     <div class="thumb">
                         <div class="overlay"></div>
                         <ul class="social-icons">
-                            <li><a href="{{ path('app_product_show', { id: produit.id }) }}"><i class="fa fa-eye"></i></a></li>
-                            <li><a href="{{ path('app_product_edit', { id: produit.id }) }}"><i class="fa fa-pencil"></i></a></li>
+                            <li><a href="{{ path('app_formation_show', { id: formation.id }) }}"><i class="fa fa-eye"></i></a></li>
+                            <li><a href="{{ path('app_formation_edit', { id: formation.id }) }}"><i class="fa fa-pencil"></i></a></li>
                             <li><a href="#" data-toggle="modal" data-target="#deleteModal" 
-                                data-id="{{ produit.id }}" data-name="{{ produit.name }}" class="delete-button"><i class="fa fa-trash"></i></a></li>
+                                data-id="{{ formation.id }}" data-name="{{ formation.name }}" class="delete-button"><i class="fa fa-trash"></i></a></li>
                         </ul>
                         <a href="#"><img src="{{ asset('assets/images/chefs-01.jpg') }}" alt="Chef #1"></a>
                     </div>
                     <div class="down-content">
-                        <h4>{{produit.name}}</h4>
-                        <span>{{produit.price}}€</span>
-                        {# pour date : produit.created_at|date('d/m/Y') #}
+                        <h4>{{formation.name}}</h4>
+                        <span>{{formation.date|date('d/m/Y, H:i')}}</span>
+                        {# pour date : formation created_at|date('d/m/Y') #}
                     </div>
                 </div>
             </div>
@@ -44,10 +44,10 @@
         </div>
   
         <div class="navigation d-flex justify-content-center mt-4">
-            {{ knp_pagination_render(produits) }}
+            {{ knp_pagination_render(formations) }}
         </div>
         {% else %}
-        <div>Il n'y a pas de produits</div>
+        <div>Il n'y a pas de formation </div>
         {% endif %}
     </div>
 </section>

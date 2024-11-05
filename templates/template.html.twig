@@ -25,6 +25,10 @@ https://templatemo.com/tm-558-klassy-cafe
     <link rel="stylesheet" href="{{ asset('assets/css/owl-carousel.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/lightbox.css') }}">
 
+    {% block javascripts %}
+    {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+
     </head>
 
     <body>
@@ -72,7 +76,5 @@ https://templatemo.com/tm-558-klassy-cafe
 
 
     </script>
-        {% block javascripts %}
-        {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+
 </html>

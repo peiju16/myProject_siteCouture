@@ -1,0 +1,40 @@
+{% extends 'template.html.twig' %}
+
+{% block body %}
+{% include "nav.html.twig" %}
+<section class="section" id="about">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-xs-12 d-flex flex-column justify-content-between">
+                <div class="left-text-content mb-3">
+                    <div class="section-heading">
+                        <h6>Nos Formations</h6>
+                        <h2>{{ formation.name }}</h2>
+                        <h5 class="p-1">{{formation.date|date('d/m/Y, H:i')}}</h5>
+                        <h5 class="p-1">Nombres de place: {{formation.nbrPlace}}</h5>
+                        <h5 class="p-1">{{ formation.price }} €</h5>
+                    </div>
+                    <p>{{ formation.description }}</p>
+                </div>
+                <div class="align-self-start mt-auto">
+                    <a href="{{ path('app_formation') }}" id="return-btn" class="btn btn-light" tabindex="-1" role="button"><i class="fa fa-arrow-left"></i> Retour</a>
+                </div>
+           
+            </div>
+            <div class="col-lg-6 col-md-6 col-xs-12">
+                <div class="right-content">
+                    <div class="thumb">
+                        <img src="#" alt="{{formation.name}}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+{% include "footer.html.twig" %}
+{% endblock %}
+
