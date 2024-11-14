@@ -21,7 +21,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Assert\Email()]
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank( 
+        message: 'Veuillez entrer e-mail'
+    )]
     #[Assert\Length(
         min: 2,
         max: 180,
@@ -41,8 +43,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank()]
-    private ?string $password = null;
+    #[Assert\NotBlank(
+        message: 'Veuillez entrer un password.'
+    )]
+    private ?string $password = 'password';
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank(
@@ -83,7 +87,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     #[Assert\Length(
         min: 10,
-        max: 50,
+        max: 25,
         minMessage: '10 caractères minimum.',
         maxMessage: '25 caractères maximum.'
     )]
@@ -92,7 +96,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(
         min: 2,
-        max: 50,
+        max: 255,
         minMessage: '2 caractères minimum.',
         maxMessage: '255 caractères maximum.'
     )]
@@ -123,6 +127,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeImmutable $createdAt = null;
 
     private ?string $pleinPassword = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -321,6 +328,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPleinPassword(string $pleinPassword): static
     {
         $this->pleinPassword = $pleinPassword;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

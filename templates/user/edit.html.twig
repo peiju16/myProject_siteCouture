@@ -1,0 +1,27 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}Kaëlysse Couture - Modifier Profile{% endblock %}
+
+{% block body %}
+    <div class="container" id="reservation">
+        <div class="row justify-content-center ">
+            <div class="col-lg-10"> 
+                <a href="{{ path('app_user') }}" type="button" class="main-button-icon"><i class="fa fa-arrow-left"></i> Retour</a>
+                {{ include('flash.html.twig') }}
+                {{ form_errors(userForm) }}  
+                <div class="contact-form">
+                    {{ form_start(userForm, { 'attr': {'novalidate': 'novalidate', 'id': 'contact', 'class':'m-0'} }) }}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h4>Modification du Compte</h4>
+                        </div>
+                        {{ form(userForm, { 'attr': {'class':'d-flex flex-wrap col-lg-12 align-items-baseline justify-content-between'} }) }} 
+                    </div> 
+                    {{ form_end(userForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

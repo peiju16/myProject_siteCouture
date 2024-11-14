@@ -1,0 +1,48 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}Kaëlysse Couture - Profile{% endblock %}
+
+{% block body %}
+{% include "nav.html.twig" %}
+
+ <!-- ***** Menu Area Starts ***** -->
+ <section class="section" id="offers">
+    <div class="container">
+        {{ include('flash.html.twig') }}
+        <div class="row">
+            <div class="col-lg-4 offset-lg-4 text-center">
+                <div class="section-heading">
+                    <h6>PROFILE</h6>
+                    <h2>Bonjour, {{ app.user.firstName|default('Prénom') }} {{ app.user.lastName|default('Nom') }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="heading-tabs">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-3 bg-dark" id="user-tabe">
+                      <a href="{{ path('app_user_edit',  { id: app.user.id }) }}" type="button" class="main-button-icon"><i class="fa fa-pencil"></i>Modifier</a>
+                      <a href="{{ path('app_user_reset_password',  { id: app.user.id }) }}" type="button" class="main-button-icon"><i class="fa fa-key"></i>Modifier le Mot de passe</a>
+                      <a href='#' type="button" class="main-button-icon"><i class="fa fa-trash"></i>Supprimer le Compte</a>
+                </div>
+            </div>
+        <div class="row col-lg-12">
+            <div class="col-lg-6 text-center">
+                <img src="{{ asset('assets/images/avatar_female.png')}}" alt="" class="w-50">
+                <h4>Pseudo: {{app.user.pseudo}}</h4>
+                <p>Date de création: {{app.user.createdAt|date('d/m/Y')}}</p>
+            </div>
+            <div class="col-lg-6 align-self-center text-left">  
+                <p class="card-text">Adresse: {{app.user.address}}</p>
+                <p class="card-text">City: {{app.user.city}}</p>
+                <p class="card-text">Zipcode: {{app.user.zipCode}}</p>
+                <p class="card-text">Telephone: {{app.user.telephone}}</p>
+                <p class="card-text">E-mail: {{app.user.email}}</p>
+            </div>   
+        </div>
+    </div>
+</section>
+                                            
+                                            
+                                            
+{% include "footer.html.twig" %}
+{% endblock %}
