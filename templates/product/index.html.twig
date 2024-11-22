@@ -14,9 +14,11 @@
                 </div>
             </div>
         </div>
+        {% if is_granted('ROLE_ADMIN') %}
         <div class="mb-3 d-flex justify-content-end">
             <a href=" {{ path('app_product_new') }}" id="new-btn" class="main-button-icon">Créer un nouveau produit</a>
         </div>
+        {% endif %}
         {{ include('flash.html.twig') }}
         {% if produits %} 
         <div class="row">
@@ -27,9 +29,11 @@
                         <div class="overlay"></div>
                         <ul class="social-icons">
                             <li><a href="{{ path('app_product_show', { id: produit.id }) }}"><i class="fa fa-eye"></i></a></li>
+                            {% if is_granted('ROLE_ADMIN') %}
                             <li><a href="{{ path('app_product_edit', { id: produit.id }) }}"><i class="fa fa-pencil"></i></a></li>
                             <li><a href="#" data-toggle="modal" data-target="#deleteModal" 
                                 data-id="{{ produit.id }}" data-name="{{ produit.name }}" class="delete-button"><i class="fa fa-trash"></i></a></li>
+                            {% endif %}
                         </ul>
                         <a href="#"><img src="{{ asset('assets/images/chefs-01.jpg') }}" alt="Chef #1"></a>
                     </div>

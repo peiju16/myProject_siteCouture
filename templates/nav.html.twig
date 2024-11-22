@@ -1,30 +1,17 @@
 <!-- ***** Header Area Start ***** -->
 <header class="header-area header-sticky">
-        <div class="container">
+        <div class="container p-0">
             <div class="row">
                 <div class="col-12">
                     <nav class="main-nav">
                         <!-- ***** Logo Start ***** -->
                         <a href="{{ path('app_home') }}" class="logo">
-                            <img src="#" align="klassy cafe html template">
+                            <img src="{{ asset('assets/images/kaelyss-logo.JPG') }}" align="Kaëlyss Couture" style="width: 150px; height: 80px;">
                         </a>
                         <!-- ***** Logo End ***** -->
                         <!-- ***** Menu Start ***** -->
                         <ul class="nav">
-                            <li class="scroll-to-section"><a href="#top" class="active">Accueil</a></li>
-                            <li class="scroll-to-section"><a href="#about">À propos</a></li>
-                           	
-                        <!-- 
-                            <li class="submenu">
-                                <a href="javascript:;">Drop Down</a>
-                                <ul>
-                                    <li><a href="#">Drop Down Page 1</a></li>
-                                    <li><a href="#">Drop Down Page 2</a></li>
-                                    <li><a href="#">Drop Down Page 3</a></li>
-                                </ul>
-                            </li>
-                        -->
-                            <li class="scroll-to-section"><a href="#menu">Services</a></li>
+                            <li class="scroll-to-section"><a href="{{ path('app_home') }}" class="active">Accueil</a></li>                        
                             <li class="submenu">
                                 <a href="javascript:;">Nos produits</a>
                                 <ul>
@@ -32,6 +19,20 @@
                                     <li><a href="{{ path('app_formation') }}">Nos formations</a></li>
                                 </ul>
                             </li>
+                            <li class="scroll-to-section"><a href="{{ path('app_registration') }}">Inscription</a></li>  
+                            <!-- <li class=""><a rel="sponsored" href="https://templatemo.com" target="_blank">External URL</a></li> -->
+                            <li class="scroll-to-section"><a href="#reservation">Contactez-nous</a></li> 
+                            <li class="submenu">
+                                <a href="javascript:;">Mon Compte</a>
+                                <ul>
+                                    <li><a href="{{ path('app_login') }}">Se Connecter</a></li>
+                                    {% if app.user %}
+                                    <li><a href="{{ path('app_user') }}">Profile</a></li>
+                                    <li><a href="{{ path('app_logout') }}">Se Déconnecter</a></li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                            {% if is_granted('ROLE_ADMIN') %}                         
                             <li class="submenu">
                                 <a href="javascript:;">Back Office</a>
                                 <ul>
@@ -41,8 +42,7 @@
                                     <li><a href="#">Features Page 4</a></li>
                                 </ul>
                             </li>
-                            <!-- <li class=""><a rel="sponsored" href="https://templatemo.com" target="_blank">External URL</a></li> -->
-                            <li class="scroll-to-section"><a href="#reservation">Contactez-nous</a></li> 
+                            {% endif %}
                         </ul>        
                         <a class='menu-trigger'>
                             <span>Menu</span>

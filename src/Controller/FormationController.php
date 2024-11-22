@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class FormationController extends AbstractController
 {
@@ -40,6 +41,7 @@ class FormationController extends AbstractController
     }
 
     #[Route('/new/formation', name: 'app_formation_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function new(Request $request, EntityManagerInterface $manager): Response
     {
         $formation = new Formation();
@@ -66,6 +68,7 @@ class FormationController extends AbstractController
     }
 
     #[Route('/formation/edit/{id}', name: 'app_formation_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(Request $request, Formation $formation, EntityManagerInterface $manager): Response
     {
         $form = $this->createForm(formationType::class, $formation);
@@ -93,6 +96,7 @@ class FormationController extends AbstractController
     }
 
     #[Route('/formation/delete/{id}', name: 'app_formation_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, Formation $formation, EntityManagerInterface $manager): JsonResponse
     {
         if (!$formation) {

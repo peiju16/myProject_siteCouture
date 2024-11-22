@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ProductController extends AbstractController
 {
@@ -41,6 +42,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/new/product', name: 'app_product_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function new(Request $request, EntityManagerInterface $manager): Response
     {
         $product = new Product();
@@ -67,6 +69,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/product/edit/{id}', name: 'app_product_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(Request $request, Product $product, EntityManagerInterface $manager): Response
     {
         $form = $this->createForm(ProductType::class, $product);
@@ -94,6 +97,7 @@ class ProductController extends AbstractController
     }
     
     #[Route('/product/delete/{id}', name: 'app_product_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, Product $product, EntityManagerInterface $manager): JsonResponse
     {
         if (!$product) {
@@ -117,7 +121,6 @@ class ProductController extends AbstractController
             $this->addFlash('error', 'Erreur: le produit n\'a pas pu être supprimé');
             return $this->json(['status' => 'error', 'message' => 'Erreur: le produit n\'a pas pu être supprimé'], 500);
         }
-    }
-    
+    } 
 
 }

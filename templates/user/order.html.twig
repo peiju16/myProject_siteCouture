@@ -1,0 +1,155 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}Kaëlysse Couture - Orders{% endblock %}
+
+{% block body %}
+{% include "nav.html.twig" %}
+
+<!-- ***** Menu Area Starts ***** -->
+<section class="section" id="offers">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 offset-lg-4 text-center">
+                <div class="section-heading">
+                    <h6>PROFILE</h6>
+                    <h2>Vos Commandes</h2>
+                    <a href="{{ path('app_user') }}" class="text-dark">Retour</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row" id="tabs">
+                    <div class="col-lg-12">
+                        <div class="heading-tabs">
+                            <div class="row">
+                                <div class="col-lg-6 offset-lg-3">
+                                    <ul>
+                                      <li><a href='#tabs-1'>Produits</a></li>
+                                      <li><a href='#tabs-2'>Formations</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <section class='tabs-content d-flex justify-content-center'>
+                            <article id='tabs-1'>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="left-list">
+                                                {% if produits %}
+                                                    {% for produit in produits %}
+                                                        {% if loop.index <= 3 %}
+                                                            <div class="col-lg-12">
+                                                                <div class="tab-item">
+                                                                    <img src="#" alt="">
+                                                                    <h4>{{produit.name}}</h4>
+                                                                    <p>{{produit.description}}</p>
+                                                                    <div class="price">
+                                                                        <h6>{{produit.price}} €</h6>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="right-list">
+                                                {% if produits %}
+                                                    {% for produit in produits %}
+                                                        {% if loop.index > 3 %}
+                                                            <div class="col-lg-12">
+                                                                <div class="tab-item">
+                                                                    <img src="#" alt="">
+                                                                    <h4>{{produit.name}}</h4>
+                                                                    <p>{{produit.description}}</p>
+                                                                    <div class="price">
+                                                                        <h6>{{produit.price}} €</h6>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}     
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="navigation d-flex justify-content-center mt-4">
+                                    {{ knp_pagination_render(produits) }}
+                                </div>
+                            </article>  
+                            <article id='tabs-2'>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="left-list">
+                                                {% if formations %}
+                                                    {% for formation in formations %}
+                                                        {% if loop.index <= 3 %}
+                                                            <div class="col-lg-12">
+                                                                <div class="tab-item">
+                                                                    <img src="#" alt="">
+                                                                    <h4>{{formation.name}}</h4>
+                                                                    <p>{{formation.description}}</p>
+                                                                    <p>{{formation.date|date('d/m/Y, H:i')}}</p>
+                                                                    <div class="price">
+                                                                        <h6>{{formation.price}} €</h6>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}     
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="right-list">
+                                                {% if formations %}
+                                                    {% for formation in formations %}
+                                                        {% if loop.index > 3 %}
+                                                            <div class="col-lg-12">
+                                                                <div class="tab-item">
+                                                                    <img src="#" alt="">
+                                                                    <h4>{{formation.name}}</h4>
+                                                                    <p>{{formation.description}}</p>
+                                                                    <p>{{formation.date|date('d/m/Y, H:i')}}</p>
+                                                                    <div class="price">
+                                                                        <h6>{{formation.price}} €</h6>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}         
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="navigation d-flex justify-content-center mt-4">
+                                    {{ knp_pagination_render(formations) }}
+                                </div>
+                            </article>  
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ***** Chefs Area Ends ***** --> 
+
+
+
+
+
+{% include "footer.html.twig" %}
+{% endblock %}

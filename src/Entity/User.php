@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -130,6 +132,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    /**
+     * @var Collection<int, Product>
+     */
+    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'users')]
+    #[ORM\JoinTable(name: 'user_product')]
+    private Collection $product;
+
+    /**
+     * @var Collection<int, Formation>
+     */
+    #[ORM\ManyToMany(targetEntity: Formation::class, inversedBy: 'users')]
+    private Collection $formation;
+
+    public function __construct()
+    {
+        $this->product = new ArrayCollection();
+        $this->formation = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -340,6 +361,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Product>
+     */
+    public function getProduct(): Collection
+    {
+        return $this->product;
+    }
+
+    public function addProduct(Product $product): static
+    {
+        if (!$this->product->contains($product)) {
+            $this->product->add($product);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): static
+    {
+        $this->product->removeElement($product);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Formation>
+     */
+    public function getFormation(): Collection
+    {
+        return $this->formation;
+    }
+
+    public function addFormation(Formation $formation): static
+    {
+        if (!$this->formation->contains($formation)) {
+            $this->formation->add($formation);
+        }
+
+        return $this;
+    }
+
+    public function removeFormation(Formation $formation): static
+    {
+        $this->formation->removeElement($formation);
 
         return $this;
     }
