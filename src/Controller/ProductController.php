@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Entity\ProductImage;
+use App\Form\ImageType;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -51,20 +54,28 @@ class ProductController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $product = $form->getData();
+                 // Filter out images with null imageFile before persisting
+                foreach ($product->getProductImages() as $productImage) {
+                    if ($productImage->getImageFile() === null) {
+                        $product->removeProductImage($productImage);
+                    }
+                }
                 $manager->persist($product);
                 $manager->flush();
     
                 $this->addFlash('success', 'Votre produit a bien été ajouté');
                 return $this->redirectToRoute('app_product');
-            } catch (\Exception $e) {
-                // Log the error if needed (optional)
-                // Log error: $e->getMessage()
-                $this->addFlash('error', 'Erreur: le produit n\'a pas pu être ajouté');
-            }         
+            }  catch (\Doctrine\DBAL\Exception $e) {
+                // Handle database-specific errors here
+                $this->addFlash('error', 'Database error: '.$e->getMessage());
+            }
+            
+               
         }
         
         return $this->render('product/new.html.twig', [
-            'productForm' => $form->createView()
+            'productForm' => $form->createView(),
+            'context' => 'new',
         ]);
     }
 
@@ -72,12 +83,31 @@ class ProductController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function edit(Request $request, Product $product, EntityManagerInterface $manager): Response
     {
+        $originalimages = new ArrayCollection();
+
+        // Create an ArrayCollection of the current Tag objects in the database
+        foreach ($product->getProductImages() as $image) {
+            $originalimages->add($image);
+        }
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $product = $form->getData();
+                foreach ($originalimages as $image) {
+                    if (!$product->getProductImages()->contains($image)) {
+                        $image->setProduct(null); // Break relationship
+                        $manager->remove($image); // Optionally delete the entity
+                    }
+                }
+                  // Filter out invalid images
+                foreach ($product->getProductImages() as $productImage) {
+                    if (!$productImage->getImageFile() && !$productImage->getImageName()) {
+                        $product->removeProductImage($productImage);
+                    }
+                }
+
                 $manager->persist($product);
                 $manager->flush();
     
@@ -92,7 +122,9 @@ class ProductController extends AbstractController
         
         return $this->render('product/edit.html.twig', [
             'productForm' => $form->createView(),
-            'product' => $product
+            'product' => $product,
+            'images' => $originalimages,
+            'context' => 'edit',
         ]);
     }
     

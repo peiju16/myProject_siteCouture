@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Formation;
+use App\Entity\Point;
 use App\Entity\Product;
 use App\Entity\User;
 use DateTime;
@@ -87,6 +88,35 @@ class AppFixtures extends Fixture
         }
 
         $manager->persist($formation2);
+
+        
+        $formation3 = new Formation();
+        $formation3->setName('Apprendre à créer un petit peluche');
+        $formation3->setDescription('Un cours de demi-journée en petit groupe pour apprendre à fabriquer un peluche !');
+        $formation3->setDate(new DateTime('15-12-2024 13:30:00'));
+        $formation3->setNbrPlace(5);
+        $formation3->setPrice(70);
+        $formation3Users = [];
+        for ($m = 0; $m < 5; $m++) {
+            // Select a random user for each stock quantity
+            $formation3User = $users[mt_rand(0, count($users) - 1)];
+            $formation3->addUser($formation3User);
+        }
+
+        $manager->persist($formation3);
+
+        $formations = [$formation, $formation2, $formation3];
+
+        foreach ($formations as $formation) {
+            for ($i=0; $i < mt_rand(0,4); $i++) { 
+                $point = new Point;
+                $point->setPoint(mt_rand(1,5))
+                        ->setUser($users[mt_rand(0, count($users) - 1)]) 
+                        ->setFormation($formation);
+                $manager->persist($point);
+            }
+        }
+
 
         $manager->flush();
     }

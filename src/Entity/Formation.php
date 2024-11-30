@@ -8,8 +8,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: FormationRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[Vich\Uploadable]
 class Formation
 {
     #[ORM\Id]
@@ -39,13 +43,23 @@ class Formation
     #[Assert\NotNull]
     private ?int $nbr_place = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $picture = null;
+    #[Vich\UploadableField(mapping: 'formations', fileNameProperty: 'imageName', size: 'imageSize')]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $imageName = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $imageSize = null;
 
     #[ORM\Column]
     #[Assert\Positive]
     #[Assert\NotNull]
     private ?float $price = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $UpdateAt = null;
+
 
     /**
      * @var Collection<int, User>
@@ -53,9 +67,16 @@ class Formation
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'formation')]
     private Collection $users;
 
+    /**
+     * @var Collection<int, Point>
+     */
+    #[ORM\OneToMany(targetEntity: Point::class, mappedBy: 'formation', orphanRemoval: true)]
+    private Collection $points;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->points = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,16 +132,49 @@ class Formation
         return $this;
     }
 
-    public function getPicture(): ?string
+    /**
+     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
+     * of 'UploadedFile' is injected into this setter to trigger the update. If this
+     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
+     * must be able to accept an instance of 'File' as the bundle will inject one here
+     * during Doctrine hydration.
+     *
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile
+     */
+    public function setImageFile(?File $imageFile = null): void
     {
-        return $this->picture;
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->UpdateAt = new \DateTimeImmutable();
+        }
     }
 
-    public function setPicture(?string $picture): static
+    public function getImageFile(): ?File
     {
-        $this->picture = $picture;
+        return $this->imageFile;
+    }
 
-        return $this;
+    public function setImageName(?string $imageName): void
+    {
+        $this->imageName = $imageName;
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+    public function setImageSize(?int $imageSize): void
+    {
+        $this->imageSize = $imageSize;
+    }
+
+    public function getImageSize(): ?int
+    {
+        return $this->imageSize;
     }
 
     public function getPrice(): ?float
@@ -134,6 +188,25 @@ class Formation
 
         return $this;
     }
+
+    public function getUpdateAt(): ?\DateTimeImmutable
+    {
+        return $this->UpdateAt;
+    }
+
+    public function setUpdateAt(?\DateTimeImmutable $UpdateAt): static
+    {
+        $this->UpdateAt = $UpdateAt;
+
+        return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function setUpdateAtValue(): void
+    {
+        $this->UpdateAt = new \DateTimeImmutable();
+    }
+
 
     /**
      * @return Collection<int, User>
@@ -157,6 +230,36 @@ class Formation
     {
         if ($this->users->removeElement($user)) {
             $user->removeFormation($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Point>
+     */
+    public function getPoints(): Collection
+    {
+        return $this->points;
+    }
+
+    public function addPoint(Point $point): static
+    {
+        if (!$this->points->contains($point)) {
+            $this->points->add($point);
+            $point->setFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removePoint(Point $point): static
+    {
+        if ($this->points->removeElement($point)) {
+            // set the owning side to null (unless already changed)
+            if ($point->getFormation() === $this) {
+                $point->setFormation(null);
+            }
         }
 
         return $this;

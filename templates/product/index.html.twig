@@ -35,7 +35,12 @@
                                 data-id="{{ produit.id }}" data-name="{{ produit.name }}" class="delete-button"><i class="fa fa-trash"></i></a></li>
                             {% endif %}
                         </ul>
-                        <a href="#"><img src="{{ asset('assets/images/chefs-01.jpg') }}" alt="Chef #1"></a>
+                        {% if produit.productImages[0] is defined and produit.productImages[0] is not null %}
+                            <img src="{{ vich_uploader_asset(produit.productImages[0], 'imageFile') }}" alt="Product Cover Image">
+                        {% else %}
+                            <img src="{{ asset('assets/images/noPic.jpg') }}" alt="Default Cover Image">
+                        {% endif %}
+
                     </div>
                     <div class="down-content">
                         <h4>{{produit.name}}</h4>

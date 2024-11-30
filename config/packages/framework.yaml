@@ -4,7 +4,7 @@ framework:
     default_locale: 'fr'  # Set the default locale to French
     # Disable translator if you don't need it at all
     translator:
-        enabled: false  # Explicitly disable translation services
+        enabled: true  # Explicitly disable translation services
     #csrf_protection: true
     annotations: false
     http_method_override: false

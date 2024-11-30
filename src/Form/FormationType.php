@@ -12,6 +12,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class FormationType extends AbstractType
 {
@@ -54,12 +56,33 @@ class FormationType extends AbstractType
                     'step' => 1, // Ensures input steps in integers only
                 ],
             ])
-            //->add('picture')
 
             ->add('price', MoneyType::class, [
                 'label' => 'Prix',
                 'label_attr' => [
                     'class' => 'text-light'
+                ],
+            ])
+
+            ->add('imageFile', VichImageType::class, [
+                'label' => 'Image',
+                'label_attr' => [
+                    'class' => 'text-light'
+                ],
+                'required' => false,
+                'allow_delete' => true,
+                'delete_label' => 'Supprimer ce image',
+                'download_label' => 'Télécharger ce image',
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/png',
+                            'image/jpeg',
+                            'image/svg',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez choisir un image en format png/jpeg/svg',
+                    ])
                 ],
             ])
 

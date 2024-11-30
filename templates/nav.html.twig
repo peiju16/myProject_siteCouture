@@ -19,7 +19,9 @@
                                     <li><a href="{{ path('app_formation') }}">Nos formations</a></li>
                                 </ul>
                             </li>
-                            <li class="scroll-to-section"><a href="{{ path('app_registration') }}">Inscription</a></li>  
+                            {% if not app.user %}
+                            <li class="scroll-to-section"><a href="{{ path('app_registration') }}">Inscription</a></li>
+                            {% endif %}  
                             <!-- <li class=""><a rel="sponsored" href="https://templatemo.com" target="_blank">External URL</a></li> -->
                             <li class="scroll-to-section"><a href="#reservation">Contactez-nous</a></li> 
                             <li class="submenu">

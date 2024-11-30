@@ -23,9 +23,9 @@
         {% if formations %} 
         <div class="row">
             {% for formation in formations %}
-            <div class="col-lg-4">
-                <div class="chef-item">
-                    <div class="thumb">
+            <div class="col-lg-4 d-flex">
+                <div class="chef-item d-flex flex-column w-100">
+                    <div class="thumb flex-grow-1 position-relative">
                         <div class="overlay"></div>
                         <ul class="social-icons">
                             <li><a href="{{ path('app_formation_show', { id: formation.id }) }}"><i class="fa fa-eye"></i></a></li>
@@ -35,9 +35,9 @@
                                 data-id="{{ formation.id }}" data-name="{{ formation.name }}" class="delete-button"><i class="fa fa-trash"></i></a></li>
                             {% endif %}
                         </ul>
-                        <a href="#"><img src="{{ asset('assets/images/chefs-01.jpg') }}" alt="Chef #1"></a>
+                        <img src="{{ vich_uploader_asset(formation) ?: asset('assets/images/noPic.jpg') }}" alt="{{formation.name}}">
                     </div>
-                    <div class="down-content">
+                    <div class="down-content mt-auto">
                         <h4>{{formation.name}}</h4>
                         <span>{{formation.date|date('d/m/Y, H:i')}}</span>
                         {# pour date : formation created_at|date('d/m/Y') #}

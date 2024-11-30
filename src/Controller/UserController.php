@@ -100,7 +100,7 @@ class UserController extends AbstractController
         ]);
     }
 
-        /**
+    /**
      * afficher les produits et les formations que l'utilisateur ont achetés
      *
      * @param  mixed $productRepository

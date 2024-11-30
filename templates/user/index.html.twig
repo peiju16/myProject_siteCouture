@@ -29,7 +29,13 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-6 text-right">
-                <img src="{{ asset('assets/images/avatar_female.png')}}" alt="" class="w-50">    
+                {% if (app.user.title is same as 'Mme' or app.user.title is same as 'Mlle') and app.user.imageName is null %}
+                    <img src="{{ asset('assets/images/avatar_female.png') }}" alt="avatar_female" class="w-50">
+                {% elseif (app.user.title is same as 'M' or app.user.title is null) and app.user.imageName is null %}
+                    <img src="{{ asset('assets/images/avatar_male.png') }}" alt="avatar_male" class="w-50">
+                {% else %}
+                    <img src="{{ vich_uploader_asset(app.user) }}" alt="{{ app.user.lastName }}" class="w-50">
+                {% endif %}
             </div>
             <div class="col-lg-6 align-self-center text-left">
                 <h4>Pseudo: {{app.user.pseudo}}</h4>

@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Product
@@ -54,9 +55,6 @@ class Product
     )]
     private ?int $stock = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $picture = null;
-
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -64,15 +62,15 @@ class Product
     private ?\DateTimeImmutable $UpdateAt = null;
 
     /**
-     * @var Collection<int, User>
+     * @var Collection<int, ProductImage>
      */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'product')]
-    #[ORM\JoinTable(name: 'user_product')]
-    private Collection $users;
+    #[ORM\OneToMany(targetEntity: ProductImage::class, mappedBy: 'product', orphanRemoval: true,  cascade: ['persist'])]
+    #[ORM\JoinColumn(onDelete: "SET NULL")]
+    private Collection $productImages;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->productImages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -128,18 +126,6 @@ class Product
         return $this;
     }
 
-    public function getPicture(): ?string
-    {
-        return $this->picture;
-    }
-
-    public function setPicture(string $picture): static
-    {
-        $this->picture = $picture;
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -177,27 +163,30 @@ class Product
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, ProductImage>
      */
-    public function getUsers(): Collection
+    public function getProductImages(): Collection
     {
-        return $this->users;
+        return $this->productImages;
     }
 
-    public function addUser(User $user): static
+    public function addProductImage(ProductImage $productImage): static
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->addProduct($this);
+        if (!$this->productImages->contains($productImage)) {
+            $this->productImages->add($productImage);
+            $productImage->setProduct($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): static
+    public function removeProductImage(ProductImage $productImage): static
     {
-        if ($this->users->removeElement($user)) {
-            $user->removeProduct($this);
+        if ($this->productImages->removeElement($productImage)) {
+            // set the owning side to null (unless already changed)
+            if ($productImage->getProduct() === $this) {
+                $productImage->setProduct(null);
+            }
         }
 
         return $this;
