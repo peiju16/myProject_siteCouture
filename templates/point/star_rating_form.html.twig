@@ -1,0 +1,50 @@
+<div class="form-group text-light" id="rating-ability-wrapper">
+    <label class="control-label" for="rating">
+        <span class="field-label-header">Comment évalueriez-vous cette formation ?*</span><br>
+        <span class="field-label-info"></span>
+    </label>
+    <h2 class="bold rating-header" style="">
+        <span class="selected-rating">0</span><small> / 5</small>
+    </h2>
+    {% for i in 1..5 %}
+        <button type="button" class="btnrating btn btn-light btn-lg" data-attr="{{ i }}" id="rating-star-{{ i }}">
+            <i class="fa fa-star" aria-hidden="true"></i>
+        </button>
+    {% endfor %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select all star buttons
+        const stars = document.querySelectorAll('.btnrating');
+        // Select the hidden input to store the rating value
+        const ratingInput = document.getElementById('comment_point');
+        // Select the element to display the selected rating value
+        const selectedRating = document.querySelector('.selected-rating');
+
+        // Add a click event listener to each star
+        stars.forEach(star => {
+            star.addEventListener('click', function () {
+                // Get the selected rating value from the clicked star
+                const rating = this.getAttribute('data-attr');
+
+                // Update the hidden input value
+                ratingInput.value = rating;
+
+                // Update the visible rating text
+                selectedRating.textContent = rating;
+
+                // Reset all stars to default (remove highlight)
+                // Reset all stars to default state
+                stars.forEach(s => s.classList.remove('btn-warning', 'btn-light'));
+                stars.forEach(s => s.classList.add('btn-light'));
+
+                // Highlight stars up to the selected rating
+                for (let i = 1; i <= rating; i++) {
+                    document.getElementById(`rating-star-${i}`).classList.remove('btn-light');
+                    document.getElementById(`rating-star-${i}`).classList.add('btn-warning');
+                }
+            });
+        });
+    });
+</script>

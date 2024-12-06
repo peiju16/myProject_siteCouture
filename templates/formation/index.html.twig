@@ -40,6 +40,8 @@
                     <div class="down-content mt-auto">
                         <h4>{{formation.name}}</h4>
                         <span>{{formation.date|date('d/m/Y, H:i')}}</span>
+                        <br>
+                        <small class="font-italic">Note Moyenne: {{averagePoints[formation.id] is not null ? averagePoints[formation.id]|number_format(2) : 'N/A'}} <i class="fa fa-star text-warning"></i></small>
                         {# pour date : formation created_at|date('d/m/Y') #}
                     </div>
                 </div>

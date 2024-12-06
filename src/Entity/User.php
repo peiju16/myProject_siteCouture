@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -157,10 +158,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Point::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $points;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $tokenRegistration = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $tokenRegistrationLifeTime = null;
+
+    #[ORM\Column]
+    private ?bool $isVerifed = false;
+
     public function __construct()
     {
         $this->formation = new ArrayCollection();
         $this->points = new ArrayCollection();
+        $this->isVerifed = false;
+        $this->tokenRegistrationLifeTime = (new \DateTime('now'))->add(new \DateInterval("P1D"));
     }
 
     public function getId(): ?int
@@ -472,6 +484,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $point->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTokenRegistration(): ?string
+    {
+        return $this->tokenRegistration;
+    }
+
+    public function setTokenRegistration(string $tokenRegistration): static
+    {
+        $this->tokenRegistration = $tokenRegistration;
+
+        return $this;
+    }
+
+    public function getTokenRegistrationLifeTime(): ?\DateTimeInterface
+    {
+        return $this->tokenRegistrationLifeTime;
+    }
+
+    public function setTokenRegistrationLifeTime(\DateTimeInterface $date): static
+    {
+        $this->tokenRegistrationLifeTime = $tokenRegistrationLifeTime;
+
+        return $this;
+    }
+
+    public function isVerifed(): ?bool
+    {
+        return $this->isVerifed;
+    }
+
+    public function setVerifed(bool $isVerifed): static
+    {
+        $this->isVerifed = $isVerifed;
 
         return $this;
     }

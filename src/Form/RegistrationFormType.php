@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -13,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 
@@ -185,6 +187,20 @@ class RegistrationFormType extends AbstractType
                 ],
                 ],
                 'invalid_message' => 'Votre mot de passe ne correspondent pas'
+            ])
+
+            ->add('agreeTerms', CheckboxType::class, [
+                'label' => 'Accepter les consitions',
+                'label_attr' => [
+                    'class' => 'text-dark p-1'
+                ],
+                'row_attr' => ['class' => 'col-lg-6 my-1'],
+                'mapped' => false,
+                'constraints' => [
+                    new IsTrue([
+                        'message' => 'Vous devez accepter nos conditions.',
+                    ]),
+                ],
             ])
 
             ->add('submit', SubmitType::class,[

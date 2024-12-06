@@ -34,6 +34,23 @@ class Point
     #[ORM\JoinColumn(nullable: false)]
     private ?Formation $formation = null;
 
+    #[ORM\Column(length: 50)]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 1,
+        max: 50,
+        minMessage: 'Votre nom devrait être minimun {{ limit }} characters',
+        maxMessage: 'Votre nom ne doit pas dépasser {{ limit }} characters',
+    )]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Votre commentaire ne doit pas dépasser {{ limit }} characters',
+    )]
+    private ?string $comment = null;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -78,6 +95,30 @@ class Point
         return $this;
     }
 
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(string $comment): static
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -95,4 +136,6 @@ class Point
     {
         $this->createdAt = new \DateTimeImmutable();
     }
+
+    
 }

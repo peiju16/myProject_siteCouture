@@ -6,6 +6,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-6 col-md-6 col-xs-12 d-flex flex-column justify-content-between">
+                {{ include('flash.html.twig') }}
                 <div class="left-text-content mb-3">
                     <div class="section-heading">
                         <h6>Nos Formations</h6>
@@ -18,6 +19,11 @@
                 </div>
                 <div class="align-self-start mt-auto">
                     <a href="{{ path('app_formation') }}" id="return-btn" class="btn btn-light" tabindex="-1" role="button"><i class="fa fa-arrow-left"></i> Retour</a>
+                    {% if app.user %}
+                        <a href="{{ path('app_point_new', { formation: formation.id }) }}" id="return-btn" class="btn btn-light" tabindex="-1" role="button">Laisser un commentaire</a>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="text-dark" style="font-size: 14px; text-decoration: underline;">Se connecter pour laisser un commentaire</a>
+                    {% endif %}
                 </div>
            
             </div>
@@ -29,12 +35,65 @@
                 </div>
             </div>
         </div>
+
+        <h2 class="mt-5">Commentaires</h2>
+        {% if comments %}
+        <div class="row mt-3">
+            {% for comment in comments %}
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                    <div class="card border-dark shadow-sm" style="min-height: 250px;">
+                        <div class="card-header bg-dark text-light">
+                            <strong>{{ comment.name }}</strong>
+                            <small class="text-muted d-block">{{ comment.createdAt|date('d/m/Y H:i') }}</small>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <a href="#" data-toggle="modal" data-target="#deleteModal" 
+                                data-id="{{ comment.id }}" data-name="{{ comment.name }}" data-url="{{ path('app_point_delete', { id: comment.id }) }}" class="delete-button float-right"><i class="fa fa-trash"></i></a>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {{ comment.point }} <i class="fa fa-star text-warning"></i>
+                            </h5>
+                            <p class="card-text">{{ comment.comment }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="navigation d-flex justify-content-center mt-4">
+            {{ knp_pagination_render(comments) }}
+        </div>
+        {% else %}
+            <p>Aucun commentaire pour le moment. Soyez le premier à en laisser un !</p>
+        {% endif %}
     </div>
 </section>
 
-
+<!-- Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title fs-5" id="exampleModalLabel">Confirmation de suppression</h3>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+          <span aria-hidden="true">&times;</span>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+          {# <a href="#" id="confirmDeleteBtn" class="btn btn-primary" tabindex="-1" role="button">Confirmer</a> #}
+          <button type="button" class="btn btn-primary confirm-delete">Confirmer</button>
+        </div>
+      </div>
+    </div>
+</div>
 
 
 {% include "footer.html.twig" %}
 {% endblock %}
+
+
+
 

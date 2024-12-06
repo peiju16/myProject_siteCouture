@@ -4,14 +4,19 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+
+use function Symfony\Component\Clock\now;
 
 class SecurityController extends AbstractController
 {
@@ -37,7 +42,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/inscription', name: 'app_registration', methods: ['GET', 'POST'])]
-    public function registration(Request $request, EntityManagerInterface $manager): Response
+    public function registration(Request $request, EntityManagerInterface $manager, MailerService $mailerService, TokenGeneratorInterface $tokenGeneratorInterface): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -52,18 +57,34 @@ class SecurityController extends AbstractController
         // }
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Token
+            $tokenregistration = $tokenGeneratorInterface->generateToken();
             try {
                 $user = $form->getData();
                 $user->setRoles(['ROLE_USER']);
+                // User token
+                $user->setTokenRegistration($tokenregistration);
                 $manager->persist($user);
                 $manager->flush();
+
+                // Mail send
+                $mailerService->send(
+                    $user->getEmail(),
+                    'Confirmation du compt utilisateur',
+                    'registration_confirm.html.twig',
+                    [
+                        'user' => $user,
+                        'token' => $tokenregistration,
+                        'lifeTimeToken' => $user->getTokenRegistrationLifeTime()->format('d-m-Y, H:i')
+                    ]
+                    );
     
-                $this->addFlash('success', 'Votre compte a bien été créé');
+                $this->addFlash('success', 'Votre compte a bien été créé. Veuillez vérifier votre e-mail pour activer votre compte.');
                 return $this->redirectToRoute('app_login');
             } catch (\Exception $e) {
                 // Log the error if needed (optional)
                 // Log error: $e->getMessage()
-                $this->addFlash('error', 'Erreur: Votre compte n\'a pas pu être enregistré.');
+                $this->addFlash('error', 'Votre compte n\'a pas pu enrégistré.');
             }         
         }
         
@@ -71,5 +92,27 @@ class SecurityController extends AbstractController
             'registrationForm' => $form->createView()
         ]);
     }
+
+    #[Route('/verify/{token}/{id<\d+>}', name: 'account_verify', methods: ['GET'])]
+    public function verifyUse(string $token, User $user, EntityManagerInterface $manger) :Response {
+        if ($user->getTokenRegistration() !== $token) {
+            throw new AccessDeniedException();
+        }
+        if ($user->getTokenRegistration() === null) {
+            throw new AccessDeniedException();
+        }
+        if (new \DateTime('now') > $user->getTokenRegistrationLifeTime()) {
+            throw new AccessDeniedException();
+        }
+
+        $user->setVerifed(true);
+        $user->setTokenRegistration('null');
+        $manger->flush();
+
+        $this->addFlash('success', 'Votre compte a bien été activé. Vous pouvez désormais vous connecter sur votre compte.');
+        return $this->redirectToRoute('app_login');
+    }
+
+ 
 
 }

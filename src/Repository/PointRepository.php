@@ -25,7 +25,7 @@ class PointRepository extends ServiceEntityRepository
      */
     public function getAveragePointForFormation(Formation $formation): ?float
     {
-        $qb = $this->createQueryBuilder('point p')
+        $qb = $this->createQueryBuilder('p')
             ->select('AVG(p.point) as avgPoint')
             ->andWhere('p.formation = :formation')
             ->setParameter('formation', $formation);

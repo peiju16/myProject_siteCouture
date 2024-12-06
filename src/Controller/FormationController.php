@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Formation;
+use App\Entity\Point;
 use App\Form\FormationType;
 use App\Repository\FormationRepository;
+use App\Repository\PointRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,26 +19,41 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class FormationController extends AbstractController
 {
     #[Route('/formation', name: 'app_formation')]
-    public function index(PaginatorInterface $paginator, FormationRepository $formationRepository, Request $request): Response
+    public function index(PaginatorInterface $paginator, FormationRepository $formationRepository, Request $request, PointRepository $pointRepository): Response
     {
         $formations = $paginator->paginate(
             $formationRepository->findAll(), /* query NOT result */
             $request->query->getInt('page', 1), /* page number */
             3 /* limit per page */
         );
+
+        $averagePoints = [];
+        foreach ($formations as $formation) {
+            $averagePoints[$formation->getId()] = $pointRepository->getAveragePointForFormation($formation);
+        }
     
         return $this->render('formation/index.html.twig', [
-            'formations' => $formations
+            'formations' => $formations,
+            'averagePoints' => $averagePoints
         ]);
     }
 
     #[Route('/formation/{id}', name: 'app_formation_show', methods: ['GET'])]
-    public function show(Formation $formation): Response
+    public function show(Formation $formation, PointRepository $pointRepository, PaginatorInterface $paginator, Request $request): Response
     {
-       
+        // Get comments for the given formation, ordered by ID in descending order (most recent first)
+        $comments = $paginator->paginate(
+            $pointRepository->findBy(
+                ['formation' => $formation], // Filter by formation ID
+                ['id' => 'DESC'] // Order by id in descending order (most recent first)
+            ),
+            $request->query->getInt('page', 1), // Page number
+            3 // Limit per page
+        );
+
         return $this->render('formation/show.html.twig', [
             'formation' => $formation,
-           
+            'comments' => $comments,     
         ]);
     }
 
@@ -97,28 +114,21 @@ class FormationController extends AbstractController
 
     #[Route('/formation/delete/{id}', name: 'app_formation_delete', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function delete(Request $request, Formation $formation, EntityManagerInterface $manager): JsonResponse
+    public function deletePoint(Point $point, EntityManagerInterface $manager): Response
     {
-        if (!$formation) {
-            return $this->json(['status' => 'error', 'message' => 'Erreur: la formation n\'a pas pu être trouvée'], 404);
+        // Check if the user has the admin role
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException('Vous n\'avez pas les droits pour supprimer ce commentaire.');
         }
-    
+
         try {
-            $manager->remove($formation);
+            $manager->remove($point);
             $manager->flush();
-    
-            // Add success flash message
-            $this->addFlash('success', 'Votre formation a bien été supprimée');
-    
-            return $this->json([
-                'status' => 'success',
-                'message' => 'Votre formation a bien été supprimée',
-                'redirect' => $this->generateUrl('app_formation')
-            ]);
+            
+            // Send a success response back to the frontend
+            return new JsonResponse(['status' => 'success']);
         } catch (\Exception $e) {
-            // Log the error if necessary
-            $this->addFlash('error', 'Erreur: la formation n\'a pas pu être supprimée');
-            return $this->json(['status' => 'error', 'message' => 'Erreur: la formation n\'a pas pu être supprimée'], 500);
+            return new JsonResponse(['status' => 'error', 'message' => 'Erreur: ' . $e->getMessage()]);
         }
     }
 

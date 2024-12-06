@@ -1,0 +1,26 @@
+{% extends 'template.html.twig' %}
+
+{% block body %}
+
+<div class="container" id="reservation">
+    <a href="{{ path('app_formation_show', { id : formation.id }) }}" class="p-5"><i class="fa fa-arrow-left"></i> Retour</a>
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-8">
+            {{ include('flash.html.twig') }}
+            <div class="col-lg-12 text-center text-light mb-5">
+                <h2 style="color: #fb5849;">Laisser votre commentaire pour <br> "{{formation.name}}"</h2>
+            </div>
+                {{ form_start(commentForm, {'attr': {'novalidate': 'novalidate'}} ) }}
+                    {% include "point/star_rating_form.html.twig" %}
+                    {{ form_row(commentForm.name) }}
+                    {{ form_row(commentForm.comment) }}
+                    <button type="submit" class="btn mt-3" id="new-btn">Submit</button>
+                {{ form_end(commentForm) }}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
