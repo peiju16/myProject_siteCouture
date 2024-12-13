@@ -15,7 +15,7 @@
                         <h5 class="p-1">Nombres de place: {{formation.nbrPlace}}</h5>
                         <h5 class="p-1">{{ formation.price }} €</h5>
                     </div>
-                    <p>{{ formation.description }}</p>
+                    <p>{{ formation.description|raw }}</p>
                 </div>
                 <div class="align-self-start mt-auto">
                     <a href="{{ path('app_formation') }}" id="return-btn" class="btn btn-light" tabindex="-1" role="button"><i class="fa fa-arrow-left"></i> Retour</a>

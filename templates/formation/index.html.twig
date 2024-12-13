@@ -14,12 +14,14 @@
                 </div>
             </div>
         </div>
+        {{ include('flash.html.twig') }}
+
         {% if is_granted('ROLE_ADMIN') %}
         <div class="mb-3 d-flex justify-content-end">
             <a href=" {{ path('app_formation_new') }}" id="new-btn" class="main-button-icon">Créer un nouveau formation</a>
         </div>
         {% endif %}
-        {{ include('flash.html.twig') }}
+        
         {% if formations %} 
         <div class="row">
             {% for formation in formations %}
@@ -32,7 +34,7 @@
                             {% if is_granted('ROLE_ADMIN') %}
                             <li><a href="{{ path('app_formation_edit', { id: formation.id }) }}"><i class="fa fa-pencil"></i></a></li>
                             <li><a href="#" data-toggle="modal" data-target="#deleteModal" 
-                                data-id="{{ formation.id }}" data-name="{{ formation.name }}" class="delete-button"><i class="fa fa-trash"></i></a></li>
+                                data-id="{{ formation.id }}" data-name="{{ formation.name }}" data-url="{{ path('app_formation_delete', { id: formation.id }) }}" class="delete-button"><i class="fa fa-trash"></i></a></li>
                             {% endif %}
                         </ul>
                         <img src="{{ vich_uploader_asset(formation) ?: asset('assets/images/noPic.jpg') }}" alt="{{formation.name}}">

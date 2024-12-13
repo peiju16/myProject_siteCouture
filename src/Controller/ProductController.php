@@ -130,28 +130,25 @@ class ProductController extends AbstractController
     
     #[Route('/product/delete/{id}', name: 'app_product_delete', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function delete(Request $request, Product $product, EntityManagerInterface $manager): JsonResponse
+    public function deleteProduct(Product $product, EntityManagerInterface $manager): Response
     {
+        // Check if the user has the admin role
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException('Vous n\'avez pas les droits pour supprimer ce produit.');
+        }
         if (!$product) {
             return $this->json(['status' => 'error', 'message' => 'Erreur: le produit n\'a pas pu être trouvé'], 404);
         }
-    
+          
         try {
             $manager->remove($product);
             $manager->flush();
-    
-            // Add success flash message
             $this->addFlash('success', 'Votre produit a bien été supprimé');
-    
-            return $this->json([
-                'status' => 'success',
-                'message' => 'Votre produit a bien été supprimé',
-                'redirect' => $this->generateUrl('app_product')
-            ]);
+            // Send a success response back to the frontend
+            return new JsonResponse(['status' => 'success']);
         } catch (\Exception $e) {
-            // Log the error if necessary
             $this->addFlash('error', 'Erreur: le produit n\'a pas pu être supprimé');
-            return $this->json(['status' => 'error', 'message' => 'Erreur: le produit n\'a pas pu être supprimé'], 500);
+            return new JsonResponse(['status' => 'error', 'message' => 'Erreur: ' . $e->getMessage()]);
         }
     } 
 

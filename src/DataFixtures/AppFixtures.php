@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Formation;
 use App\Entity\Point;
 use App\Entity\Product;
+use App\Entity\Transport;
 use App\Entity\User;
 use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -32,6 +33,7 @@ class AppFixtures extends Fixture
             $user->setPleinPassword('password'); 
             $user->setRoles(['ROLE_USER']);
             $user->setPseudo((mt_rand(0,1) === 1) ? $faker->firstName : 'null');
+            $user->setVerifed(1);
             // $user->setPicture($faker->image($dir = null, $width = 320, $height = 240));
             $users[] = $user;
             $manager->persist($user);
@@ -117,6 +119,17 @@ class AppFixtures extends Fixture
             }
         }
 
+        $transport = new Transport();
+        $transport->setTitle('Colissimo');
+        $transport->setContent('délais de livraison entre 3-5 jours');
+        $transport->setPrice(10);      
+        $manager->persist($transport);
+
+        $transport2 = new Transport();
+        $transport2->setTitle('Retrait à la boutique');
+        $transport2->setContent('Récupérer vos commandes directement dans la boutique');
+        $transport2->setPrice(0);      
+        $manager->persist($transport2);
 
         $manager->flush();
     }

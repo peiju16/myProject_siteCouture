@@ -14,12 +14,14 @@
                 </div>
             </div>
         </div>
+        {{ include('flash.html.twig') }}
+
         {% if is_granted('ROLE_ADMIN') %}
         <div class="mb-3 d-flex justify-content-end">
             <a href=" {{ path('app_product_new') }}" id="new-btn" class="main-button-icon">Créer un nouveau produit</a>
         </div>
-        {% endif %}
-        {{ include('flash.html.twig') }}
+        {% endif %} 
+        
         {% if produits %} 
         <div class="row">
             {% for produit in produits %}
@@ -32,7 +34,7 @@
                             {% if is_granted('ROLE_ADMIN') %}
                             <li><a href="{{ path('app_product_edit', { id: produit.id }) }}"><i class="fa fa-pencil"></i></a></li>
                             <li><a href="#" data-toggle="modal" data-target="#deleteModal" 
-                                data-id="{{ produit.id }}" data-name="{{ produit.name }}" class="delete-button"><i class="fa fa-trash"></i></a></li>
+                                data-id="{{ produit.id }}" data-name="{{ produit.name }}" data-url="{{ path('app_product_delete', { id: produit.id }) }}" class="delete-button"><i class="fa fa-trash"></i></a></li>
                             {% endif %}
                         </ul>
                         {% if produit.productImages[0] is defined and produit.productImages[0] is not null %}

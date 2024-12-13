@@ -167,12 +167,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $isVerifed = false;
 
+    /**
+     * @var Collection<int, TransportAddress>
+     */
+    #[ORM\OneToMany(targetEntity: TransportAddress::class, mappedBy: 'user')]
+    private Collection $transportAddresses;
+
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $orders;
+
     public function __construct()
     {
         $this->formation = new ArrayCollection();
         $this->points = new ArrayCollection();
         $this->isVerifed = false;
         $this->tokenRegistrationLifeTime = (new \DateTime('now'))->add(new \DateInterval("P1D"));
+        $this->transportAddresses = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -520,6 +534,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVerifed(bool $isVerifed): static
     {
         $this->isVerifed = $isVerifed;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TransportAddress>
+     */
+    public function getTransportAddresses(): Collection
+    {
+        return $this->transportAddresses;
+    }
+
+    public function addTransportAddress(TransportAddress $transportAddress): static
+    {
+        if (!$this->transportAddresses->contains($transportAddress)) {
+            $this->transportAddresses->add($transportAddress);
+            $transportAddress->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransportAddress(TransportAddress $transportAddress): static
+    {
+        if ($this->transportAddresses->removeElement($transportAddress)) {
+            // set the owning side to null (unless already changed)
+            if ($transportAddress->getUser() === $this) {
+                $transportAddress->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getUser() === $this) {
+                $order->setUser(null);
+            }
+        }
 
         return $this;
     }

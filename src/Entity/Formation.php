@@ -52,10 +52,10 @@ class Formation
     #[ORM\Column(nullable: true)]
     private ?int $imageSize = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     #[Assert\Positive]
     #[Assert\NotNull]
-    private ?float $price = null;
+    private ?string $price = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $UpdateAt = null;
@@ -179,13 +179,12 @@ class Formation
 
     public function getPrice(): ?float
     {
-        return $this->price;
+        return $this->price !== null ? (float) $this->price : null;
     }
-
-    public function setPrice(float $price): static
+    
+    public function setPrice(float $price): self
     {
-        $this->price = $price;
-
+        $this->price = number_format($price, 2, '.', ''); // Ensure 2 decimal places
         return $this;
     }
 

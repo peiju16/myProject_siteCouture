@@ -1,0 +1,132 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}Mon Site Démo- Panier index{% endblock %}
+
+{% block body %}
+<style>
+/* public/css/cart.css */
+.cart-container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.cart-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+th {
+    background-color: #fb5849;
+    color: white;
+}
+
+.cart-total {
+    margin-top: 20px;
+    text-align: right;
+    font-size: 20px;
+}
+
+</style>
+
+{% include "nav.html.twig" %}
+
+<div id="top">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 mt-4">
+                <h2 class="text-center mb-4">Mon Panier</h2> 
+                {% if cartData.items is not empty %}
+                <form action="{{ path('app_order') }}" method="POST" >             
+                    <div class="d-flex justify-content-end mt-4">
+                        <a href="{{ path('app_cart_removeAll') }}" class="badge badge-warning p-2 mb-3">
+                            Vider le panier
+                        </a>
+                    </div> 
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Picture</th>
+                                <th>Prix</th>
+                                <th>Quantité</th>
+                                <th>Total</th>
+                                <th>Supprimer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {# {{dump(cartItems)}} #}
+                            {% for item in cartData.items %}
+                            {% if item.product is defined %}
+                            <tr>
+                            <td> {{ item.product.id }}</td> 
+                            <td> {{ item.product.name }}</td> 
+                            <td> {{ item.product.description }}</td> 
+                            <td>
+                                {% if item.product.productImages[0] is defined and item.product.productImages[0] is not null %}
+                                    <img style="width:100px" src="{{ vich_uploader_asset(item.product.productImages[0], 'imageFile') }}" alt="Image de {{ item.product.name }}">
+                                {% else %}
+                                    <img style="width:100px" src="{{ asset('assets/images/noPic.jpg') }}" alt="Default Cover Image">
+                                {% endif %}
+                            </td>
+                            <td> {{ item.product.price }}</td> 
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <a href="{{ path('app_cart_decrease', {id: item.product.id}) }}" class="btn btn-sm btn-outline-secondary me-2">-</a>
+                                    <input type="number" class="form-control text-center p-0 m-0" value="{{ item.quantity }}" style="width: 50px;" readonly>
+                                    <a href="{{ path('app_cart_add', {id: item.product.id}) }}" class="btn btn-sm btn-outline-secondary ms-2">+</a>
+                                </div>
+                            </td>                        
+                            <td>{{ item.product.price * item.quantity }} €</td>
+                            <td><a href="{{ path('app_cart_remove', {id: item.product.id}) }}" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Supprimer"><i class="fa fa-trash"></i></a></td>  
+                            </tr>
+                            {% endif %}
+                            {% endfor %}  
+
+                        </tbody>
+                    </table>
+                    <div class="cart-total">
+                        Total de Nombres: <span>{{ cartData.items|map(item => item.quantity)|reduce((carry, qty) => carry + qty, 0) }}</span>
+                        <br>
+                        Total: <span>{{ cartData.cartTotal }} €</span>
+                    </div>
+
+                    <div class="d-flex col-lg-12 justify-content-center">
+                        <button type="submit" name="payer" class="btn btn-lg" id="new-btn">
+                            Valider mon panier
+                        </button>
+                    </div>
+                </form> 
+                {% else %}
+                <h2> Panier Vide </h2>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+{% include "footer.html.twig" %}
+{% endblock %}

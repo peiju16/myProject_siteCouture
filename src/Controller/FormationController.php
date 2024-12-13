@@ -114,20 +114,25 @@ class FormationController extends AbstractController
 
     #[Route('/formation/delete/{id}', name: 'app_formation_delete', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function deletePoint(Point $point, EntityManagerInterface $manager): Response
+    public function deleteFormation(Formation $formation, EntityManagerInterface $manager): Response
     {
         // Check if the user has the admin role
         if (!$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException('Vous n\'avez pas les droits pour supprimer ce commentaire.');
+            throw $this->createAccessDeniedException('Vous n\'avez pas les droits pour supprimer cette formation.');
+        }
+        if (!$formation) {
+            return $this->json(['status' => 'error', 'message' => 'Erreur: la formation n\'a pas pu être trouvé'], 404);
         }
 
         try {
-            $manager->remove($point);
+            $manager->remove($formation);
             $manager->flush();
+            $this->addFlash('success', 'Votre formation a bien été supprimé');
             
             // Send a success response back to the frontend
             return new JsonResponse(['status' => 'success']);
         } catch (\Exception $e) {
+            $this->addFlash('error', 'Erreur: la formation n\'a pas pu être supprimée');
             return new JsonResponse(['status' => 'error', 'message' => 'Erreur: ' . $e->getMessage()]);
         }
     }

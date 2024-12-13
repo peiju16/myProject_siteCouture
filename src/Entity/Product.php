@@ -37,14 +37,14 @@ class Product
     )]
     private ?string $description = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     #[Assert\Positive(
         message: 'Veuillez entrer un prix correct.'
     )]
     #[Assert\NotNull(
         message: 'Veuillez entrer le prix.'
     )]
-    private ?float $price = null;
+    private ?string $price = null;
 
     #[ORM\Column]
     #[Assert\PositiveOrZero(
@@ -104,13 +104,12 @@ class Product
 
     public function getPrice(): ?float
     {
-        return $this->price;
+        return $this->price !== null ? (float) $this->price : null;
     }
-
-    public function setPrice(float $price): static
+    
+    public function setPrice(float $price): self
     {
-        $this->price = $price;
-
+        $this->price = number_format($price, 2, '.', ''); // Ensure 2 decimal places
         return $this;
     }
 

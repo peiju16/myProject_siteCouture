@@ -30,20 +30,13 @@
                                     <li><a href="{{ path('app_login') }}">Se Connecter</a></li>
                                     {% if app.user %}
                                     <li><a href="{{ path('app_user') }}">Profile</a></li>
+                                    <li><a href="{{ path('app_cart') }}">Mon Panier</a></li>
                                     <li><a href="{{ path('app_logout') }}">Se Déconnecter</a></li>
                                     {% endif %}
                                 </ul>
                             </li>
-                            {% if is_granted('ROLE_ADMIN') %}                         
-                            <li class="submenu">
-                                <a href="javascript:;">Back Office</a>
-                                <ul>
-                                    <li><a href="#">Features Page 1</a></li>
-                                    <li><a href="#">Features Page 2</a></li>
-                                    <li><a href="#">Features Page 3</a></li>
-                                    <li><a href="#">Features Page 4</a></li>
-                                </ul>
-                            </li>
+                            {% if app.user and 'ROLE_ADMIN' in app.user.getRoles() %}                         
+                            <li><a href="{{ path('admin') }}">Back Office</a></li>
                             {% endif %}
                         </ul>        
                         <a class='menu-trigger'>
