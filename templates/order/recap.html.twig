@@ -1,0 +1,107 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}Récapitulatif de la Commande{% endblock %}
+ 
+{% block body %}
+{% include "nav.html.twig" %}
+
+<section class="section" id="menu">
+    <div class="container">
+        <h2 class="text-center mb-4">Confirmation de votre commande</h2>
+
+        <div class="card mb-4" style="min-height: auto">
+            <div class="card-header text-white" style="background-color: #fb5849;">Mode de livraison</div>
+            <div class="card-body">
+                <p><strong>Mode:</strong> {{ transporter.title }}</p>
+                <p><strong>délai:</strong> {{ transporter.content}}</p>
+                <p><strong>Prix:</strong> {{ transporter.price }} €</p>
+            </div>
+        </div>
+
+        <div class="card mb-4" style="min-height: auto">
+            <div class="card-header text-white" style="background-color: #fb5849;">Adresse de livraison</div>
+            <div class="card-body">
+                <p><strong>Nom:</strong> {{ deliveryAddress[0] }}</p>
+                <p><strong>Adresse:</strong> {{ deliveryAddress[1] }}</p>
+                <p><strong>Ville:</strong> {{ deliveryAddress[2] }}</p>
+                <p><strong>Code Postal:</strong> {{ deliveryAddress[3] }}</p>
+            </div>
+        </div>
+
+        <div class="card mb-4" style="min-height: auto">
+            <div class="card-header text-white" style="background-color: #fb5849;">Mode de payment</div>
+            <div class="card-body">
+                <p><strong>Mode de payment:</strong> {{ method }}</p>
+            </div>
+        </div>
+
+
+        <div class="card mb-4">
+            <div class="card-header text-white" style="background-color: #fb5849;">Récapitulatif des Produits</div>
+            <div class="card-body">
+                {% if cartData.items is not empty %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Prix Unitaire</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cartData.items %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.product.price }} €</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.product.price * item.quantity }} €</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Total Produits:</strong></td>
+                            <td>{{ cartData.cartTotal }} €</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Frais de Livraison:</strong></td>
+                            <td>{{ transporter.price }} €</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Total Général:</strong></td>
+                            <td><strong>{{ cartData.cartTotal + transporter.price }} €</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                {% else %}
+                <p>Votre panier est vide.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="text-center mb-4">
+            <p>Si vous souhaitez modifier votre commande, veuillez revenir à la page précédente.</p>
+            <a href="{{ path('app_order_modify', { reference : reference }) }}" class="btn btn-secondary">Retour</a>
+        </div>
+
+        <div class="text-center">
+            <h5>Choisissez une méthode de paiement :</h5>
+            {% if method == 'stripe' %}
+                <form action="{{ path('app_payment_stripe', { reference : reference }) }}" method="POST">
+                    <button type="submit" class="btn mt-3" id="new-btn">Payer avec Stripe</button>
+                </form>
+            {% elseif method == 'paypal' %}   
+                <form action="{{ path('app_payment_paypal', { reference : reference }) }}" method="POST">
+                    <button type="submit" class="btn mt-3" id="new-btn">Payer avec Paypal</button>
+                </form>   
+            {% else %}
+                <p class="text-danger">Méthode de paiement non valide.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% include "footer.html.twig" %}
+
+{% endblock %}

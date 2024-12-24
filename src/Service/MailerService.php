@@ -6,6 +6,8 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\Multipart\MixedPart;
 
 /**
  * MailerService pour générer un mail
@@ -13,7 +15,7 @@ use Symfony\Component\Mime\Address;
 class MailerService
 {
     public function __construct(private readonly MailerInterface $mailer) {}
-    
+
     /**
      * send
      *
@@ -24,7 +26,8 @@ class MailerService
         string $to,
         string $subject,
         string $templateTwig,
-        array $context
+        array $context,
+        array $attachments = [] // New parameter for attachments
     ): void {
         $email = (new TemplatedEmail())
             ->from(new Address('noreply@monSite.fr', 'monSite'))
@@ -32,6 +35,19 @@ class MailerService
             ->subject($subject)
             ->htmlTemplate("mail/$templateTwig")
             ->context($context);
+
+        // Attach files if any
+        foreach ($attachments as $attachment) {
+            if (is_array($attachment) && isset($attachment['path'])) {
+                $email->attachFromPath(
+                    $attachment['path'],
+                    $attachment['name'] ?? null,
+                    $attachment['contentType'] ?? null
+                );
+            }
+        }
+        
+
         try {
             $this->mailer->send($email);
         } catch (TransportExceptionInterface $e) {

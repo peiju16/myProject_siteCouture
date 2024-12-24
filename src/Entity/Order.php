@@ -68,9 +68,7 @@ class Order
     private ?string $receiverPhone = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(
-        message: 'Veuillez entrer votre addresse.'
-    )]
+    #[Assert\NotBlank(groups: ["new_address"])]
     #[Assert\Length(
         min: 10,
         max: 255,
@@ -80,9 +78,7 @@ class Order
     private ?string $receiverAddress = null;
 
     #[ORM\Column(length: 100)]
-    #[Assert\NotBlank(
-        message: 'Veuillez entrer votre ville.'
-    )]
+    #[Assert\NotBlank(groups: ["new_address"])]
     #[Assert\Length(
         min: 2,
         max: 100,
@@ -92,9 +88,7 @@ class Order
     private ?string $city = null;
 
     #[ORM\Column(length: 20)]
-    #[Assert\NotBlank(
-        message: 'Veuillez entrer votre code postal.'
-    )]
+    #[Assert\NotBlank(groups: ["new_address"])]
     #[Assert\Length(
         min: 5,
         max: 20,
@@ -139,6 +133,12 @@ class Order
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[ORM\OneToOne(mappedBy: 'orderInvoice', cascade: ['persist', 'remove'])]
+    private ?Invoice $invoice = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $status = null;
 
     public function __construct()
     {
@@ -385,6 +385,40 @@ class Order
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getInvoice(): ?Invoice
+    {
+        return $this->invoice;
+    }
+
+    public function setInvoice(?Invoice $invoice): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($invoice === null && $this->invoice !== null) {
+            $this->invoice->setOrderInvoice(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($invoice !== null && $invoice->getOrderInvoice() !== $this) {
+            $invoice->setOrderInvoice($this);
+        }
+
+        $this->invoice = $invoice;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

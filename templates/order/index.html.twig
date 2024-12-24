@@ -22,58 +22,79 @@
                 </div>
             </div>
         </div>
-
-        {{ form_start(orderForm) }}              
+        {{ include('flash.html.twig') }}
+        
+        {{ form_start(orderForm, { 'attr': {'novalidate': 'novalidate'}, 'action': path('app_order_verify'), 'method': 'POST' }) }}   
+        <div class="col-lg-12 text-center text-light">
+            {{ form_errors(orderForm) }}
+        </div>      
         <!-- Delivery Choice Section -->
         <div class="form-group col-lg-8">
             {{ form_row(orderForm.transportWay) }}
+            {{ form_errors(orderForm.transportWay) }}
         </div>          
              
         <!-- Address Information Section -->
         <div class="form-group col-lg-8">
             {{ form_row(orderForm.title) }}
+            {{ form_errors(orderForm.title) }}
         </div>
 
         <div class="form-group col-lg-8">
             {{ form_row(orderForm.receiverName) }}
+            {{ form_errors(orderForm.title) }}
         </div>
     
         <div class="form-group col-lg-8">
             {{ form_row(orderForm.receiverEmail) }}
+            {{ form_errors(orderForm.receiverName) }}
         </div>
 
         <div class="form-group col-lg-8">
             {{ form_row(orderForm.receiverPhone) }}
+            {{ form_errors(orderForm.receiverPhone) }}
         </div>
     
         <div class="form-group col-lg-8">
             {{ form_row(orderForm.useSavedAddress) }}
+            {{ form_errors(orderForm.useSavedAddress) }}
+        </div>
+        
+        <div class="form-group col-lg-8">
+            {{ form_row(orderForm.paymentMethod) }}
+            {{ form_errors(orderForm.paymentMethod) }}
         </div>
     
         <div id="savedAddressFields" style="display: none;">
             <div class="form-group col-lg-8">
                 {{ form_row(orderForm.savedAddress) }}
+                {{ form_errors(orderForm.savedAddress) }}
             </div>
         </div>
     
         <div id="customAddressFields" style="display: block;">
             <div class="form-group col-lg-8">
                 {{ form_row(orderForm.addressTitle) }}
+                {{ form_errors(orderForm.addressTitle) }}
             </div>
             <div class="form-group col-lg-8">
                 {{ form_row(orderForm.receiverAddress) }}
+                {{ form_errors(orderForm.receiverAddress) }}
             </div>
     
             <div class="form-group col-lg-8">
                 {{ form_row(orderForm.city) }}
+                {{ form_errors(orderForm.city) }}
             </div>
     
             <div class="form-group col-lg-8">
                 {{ form_row(orderForm.zipCode) }}
+                {{ form_errors(orderForm.zipCode) }}
             </div>
     
             <div class="form-group col-lg-8">
                 {{ form_row(orderForm.saveAddress) }}
+                {{ form_errors(orderForm.saveAddress) }}
             </div>
         </div>    
          <!-- Recap of Products Section -->
@@ -138,8 +159,11 @@
 
         <!-- Submit Order Button -->
         <div class="text-center">
-            <button type="submit" class="btn" id="new-btn">Valider la commande</button>
+            <button type="submit" class="btn" id="new-btn">
+                {{ isModify ? 'Enregistrer la modification' : 'Valider la commande' }}
+            </button>
         </div>
+
     
         {{ form_end(orderForm) }}
     </div>

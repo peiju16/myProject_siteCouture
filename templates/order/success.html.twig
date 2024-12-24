@@ -1,0 +1,63 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}Mon Site Démo - Payment Success{% endblock %}
+
+{% block body %}
+
+<section class="section mt-0" id="menu">
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="text-center mb-4 text-secondary">Confirmation de votre achat</h2>
+                <p>Bonjour,</p>
+                <p class="lead">Merci pour votre achat. Voici les détails de votre commande :</p>
+                <ul class="list-group mb-4">
+                    <li class="list-group-item">
+                        <strong>Numéro de facture :</strong> {{ invoiceNumber is not null ? invoiceNumber : 'Non disponible' }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Date :</strong> {{ order.createdAt|date('d-m-Y') }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Montant total de produits :</strong> {{ order.totalPrice - order.transportPrice }} €
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Montant de livraison :</strong> {{ order.transportPrice }} €
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Montant total :</strong> {{ order.totalPrice }} €
+                    </li>
+                </ul>
+
+                <h3 class="text-secondary">Produits achetés :</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Produit</th>
+                                <th class="text-right">Quantité</th>
+                                <th class="text-right">Prix</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detail in orderDetails %}
+                                <tr>
+                                    <td>{{ detail.productName }}</td>
+                                    <td class="text-right">{{ detail.quantity }}</td>
+                                    <td class="text-right">{{ detail.price }} €</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mt-4">Nous espérons vous revoir bientôt.</p>
+                <a href="{{ path('app_home') }}" class="btn mt-3" id="new-btn">Retour à la page d'accueil</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+{% endblock %}
