@@ -25,7 +25,7 @@
                             <div class="row">
                                 <div class="col-lg-6 offset-lg-3">
                                     <ul>
-                                      <li><a href='#tabs-1'>Produits</a></li>
+                                      <li><a href='#tabs-1'>Commandes</a></li>
                                       <li><a href='#tabs-2'>Formations</a></li>
                                     </ul>
                                 </div>
@@ -39,16 +39,16 @@
                                     <div class="col-lg-6">
                                         <div class="row">
                                             <div class="left-list">
-                                                {% if produits %}
-                                                    {% for produit in produits %}
+                                                {% if orders %}
+                                                    {% for order in orders %}
                                                         {% if loop.index <= 3 %}
                                                             <div class="col-lg-12">
                                                                 <div class="tab-item">
                                                                     <img src="#" alt="">
-                                                                    <h4>{{produit.name}}</h4>
-                                                                    <p>{{produit.description}}</p>
+                                                                    <h4>{{order.createdAt|date('d-m-Y')}}</h4>
+                                                                    <p>{{order.status}}</p>
                                                                     <div class="price">
-                                                                        <h6>{{produit.price}} €</h6>
+                                                                        <h6>{{order.totalPrice}} €</h6>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -61,16 +61,16 @@
                                     <div class="col-lg-6">
                                         <div class="row">
                                             <div class="right-list">
-                                                {% if produits %}
-                                                    {% for produit in produits %}
+                                                {% if orders %}
+                                                    {% for order in orders %}
                                                         {% if loop.index > 3 %}
                                                             <div class="col-lg-12">
                                                                 <div class="tab-item">
                                                                     <img src="#" alt="">
-                                                                    <h4>{{produit.name}}</h4>
-                                                                    <p>{{produit.description}}</p>
+                                                                    <h4>{{order.createdAt|date('d-m-Y')}}</h4>
+                                                                    <p>{{order.status}}</p>
                                                                     <div class="price">
-                                                                        <h6>{{produit.price}} €</h6>
+                                                                        <h6>{{order.totalPrice}} €</h6>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -82,7 +82,7 @@
                                     </div>
                                 </div>
                                 <div class="navigation d-flex justify-content-center mt-4">
-                                    {{ knp_pagination_render(produits) }}
+                                    {{ knp_pagination_render(orders) }}
                                 </div>
                             </article>  
                             <article id='tabs-2'>

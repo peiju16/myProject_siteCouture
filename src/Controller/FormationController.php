@@ -4,9 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Formation;
 use App\Entity\Point;
+use App\Entity\Reservation;
 use App\Form\FormationType;
 use App\Repository\FormationRepository;
 use App\Repository\PointRepository;
+use App\Repository\ReservationRepository;
+use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,8 +42,17 @@ class FormationController extends AbstractController
     }
 
     #[Route('/formation/{id}', name: 'app_formation_show', methods: ['GET'])]
-    public function show(Formation $formation, PointRepository $pointRepository, PaginatorInterface $paginator, Request $request): Response
+    public function show(Formation $formation, PointRepository $pointRepository, PaginatorInterface $paginator, Request $request, ReservationRepository $reservationRepository): Response
     {
+        $user = $this->getUser();
+        $hasReservation = false;
+
+        if ($user) {
+            $existingReservation = $reservationRepository->findOneBy(['formation' => $formation, 'user' => $user]);
+            if ($existingReservation) {
+                $hasReservation = true;
+            }
+        }
         // Get comments for the given formation, ordered by ID in descending order (most recent first)
         $comments = $paginator->paginate(
             $pointRepository->findBy(
@@ -53,7 +65,8 @@ class FormationController extends AbstractController
 
         return $this->render('formation/show.html.twig', [
             'formation' => $formation,
-            'comments' => $comments,     
+            'comments' => $comments,
+            'hasReservation' => $hasReservation,     
         ]);
     }
 
@@ -135,6 +148,61 @@ class FormationController extends AbstractController
             $this->addFlash('error', 'Erreur: la formation n\'a pas pu être supprimée');
             return new JsonResponse(['status' => 'error', 'message' => 'Erreur: ' . $e->getMessage()]);
         }
+    }
+
+
+    #[Route('/formation/reserve/{id}', name: 'app_formation_reserve', methods: ['GET', 'POST'])]
+    public function reserve(Formation $formation, EntityManagerInterface $entityManager, ReservationRepository $reservationRepository, MailerService $mailerService): Response
+    {
+        $user = $this->getUser();
+
+        // Check if the user is logged in
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Check if the user has already reserved a place
+        $existingReservation = $reservationRepository->findOneBy(['formation' => $formation, 'user' => $user]);
+        if ($existingReservation) {
+            $hasReservation = true;
+            $this->addFlash('error', 'Vous avez déjà réservé une place pour cette formation.');
+            return $this->redirectToRoute('app_formation_show', ['id' => $formation->getId()]);
+        }
+
+        // // Check if the user has reached the maximum number of reservations (e.g., 3 reservations per user)
+        // $userReservations = $reservationRepository->findBy(['user' => $user]);
+        // if (count($userReservations) >= 3) { // Adjust the limit as needed
+        //     $this->addFlash('error', 'Vous avez atteint le nombre maximum de réservations.');
+        //     return $this->redirectToRoute('app_formation_show', ['id' => $formation->getId()]);
+        // }
+
+        // Check if the formation has available places
+        $currentReservations = $reservationRepository->countByFormation($formation);
+        if ($currentReservations >= $formation->getNbrPlace()) {
+            $this->addFlash('error', 'Cette formation est complète.');
+            return $this->redirectToRoute('app_formation_show', ['id' => $formation->getId()]);
+        }
+
+        // Create a new reservation
+        $reservation = new Reservation();
+        $reservation->setFormation($formation);
+        $reservation->setUser($user);
+        $entityManager->persist($reservation);
+        $entityManager->flush();
+
+        $mailerService->send(
+            $this->getUser()->getEmail(),
+            'Confirmation de votre Réservation',
+            'reservation_confirm.html.twig',
+            [
+                'user' => $this->getUser(),
+                'formation' => $formation,
+            ],
+        );
+
+        $this->addFlash('success', 'Vous avez réservé une place pour cette formation avec succès.');
+
+        return $this->redirectToRoute('app_formation_show', ['id' => $formation->getId()]);
     }
 
 }

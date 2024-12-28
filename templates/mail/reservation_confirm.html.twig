@@ -1,0 +1,30 @@
+
+{% extends "mail/base.html.twig" %}
+{% block body %}
+    <!-- Header -->
+    <div class="header">
+        <h2>Confirmation de votre resévation</h2>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <p>Bonjour {{ user.firstName }} {{user.lastName}},</p>
+        <p>Merci pour votre réservation. Voici les détails de votre foramtion :</p>
+        <ul>
+            <li><strong>Formation :</strong> {{ formation.name }}</li>
+            <li><strong>Date :</strong> {{ formation.date|date('d-m-Y, H:i') }}</li>
+            <li><strong>Description :</strong> {{ formation.description }}</li>
+            <li><strong>Prix :</strong> {{ formation.price }} €</li>
+        </ul>
+
+        <p><strong>Informations de paiement :</strong></p>
+        <p>Le paiement s'effectue sur place. Nous acceptons les paiements par carte bancaire ou en espèces.</p>
+
+        <p>Vous recevrez prochainement des informations complémentaires concernant cette formation.</p>
+
+        <p>Cordialement,</p>
+
+        <p>L'équipe Mon Site Démo</p>
+
+    </div>
+{% endblock %}  

@@ -14,6 +14,17 @@
                         <h5 class="p-1">{{formation.date|date('d/m/Y, H:i')}}</h5>
                         <h5 class="p-1">Nombres de place: {{formation.nbrPlace}}</h5>
                         <h5 class="p-1">{{ formation.price }} €</h5>
+                        <div class="text-right my-3">
+                        {% if app.user %}
+                            {% if hasReservation is same as false %}
+                                <a href="{{ path('app_formation_reserve', {'id': formation.id}) }}" class="btn btn-dark" tabindex="-1" role="button">Réserver</a>
+                            {% else %}
+                                <button class="btn btn-danger" disabled>Réservé</button>
+                            {% endif %}
+                        {% else %}
+                            <a href="{{ path('app_login') }}" class="btn btn-dark" tabindex="-1" role="button">se connecter pour réserver</a>
+                        {% endif %}
+                        </div>
                     </div>
                     <p>{{ formation.description|raw }}</p>
                 </div>

@@ -1,123 +1,45 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmation de votre achat</title>
-    <style>
-        body {
-            font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
-        }
-        .email-container {
-            max-width: 600px;
-            margin: 20px auto;
-            background: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            background-color: #fb5849;
-            color: #ffffff;
-            text-align: center;
-            padding: 20px;
-        }
-        .header h2 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .content {
-            padding: 20px;
-        }
-        .content ul {
-            padding-left: 20px;
-        }
-        .content ul li {
-            margin-bottom: 10px;
-        }
-        .table-container {
-            margin-top: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        .footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #f4f4f4;
-            color: #777;
-            font-size: 14px;
-        }
-        .footer a {
-            color: #fb5849;
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
-    <div class="email-container">
-        <!-- Header -->
-        <div class="header">
-            <h2>Confirmation de votre achat</h2>
-        </div>
 
-        <!-- Content -->
-        <div class="content">
-            <p>Bonjour,</p>
-            <p>Merci pour votre achat. Voici les détails de votre commande :</p>
-            <ul>
-                <li><strong>Numéro de facture :</strong> {{ invoice.id }}</li>
-                <li><strong>Date :</strong> {{ order.createdAt|date('d-m-Y') }}</li>
-                <li><strong>Montant total de produits :</strong> {{ order.totalPrice - order.transportPrice }} €</li>
-                <li><strong>Montant de livraison :</strong> {{ order.transportPrice }} €</li>
-                <li><strong>Montant total :</strong> {{ order.totalPrice }} €</li>
-            </ul>
-
-            <div class="table-container">
-                <h3>Produits achetés :</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Produit</th>
-                            <th style="text-align: right;">Quantité</th>
-                            <th style="text-align: right;">Prix</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for detail in orderDetails %}
-                        <tr>
-                            <td>{{ detail.productName }}</td>
-                            <td style="text-align: right;">{{ detail.quantity }}</td>
-                            <td style="text-align: right;">{{ detail.price }} €</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <p style="margin-top: 20px;">Nous espérons vous revoir bientôt.</p>
-        </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <p>&copy; {{ "now"|date("Y") }} Mon Site Démo. Tous droits réservés.</p>
-            <p><a href="{{ path('app_home') }}">Retour à la page d'accueil</a></p>
-        </div>
+{% extends "mail/base.html.twig" %}
+{% block body %}
+    <!-- Header -->
+    <div class="header">
+        <h2>Confirmation de votre achat</h2>
     </div>
-</body>
-</html>
+
+    <!-- Content -->
+    <div class="content">
+        <p>Bonjour {{ user.firstName }} {{user.lastName}},</p>
+        <p>Merci pour votre achat. Voici les détails de votre commande :</p>
+        <ul>
+            <li><strong>Numéro de facture :</strong> {{ invoice.id }}</li>
+            <li><strong>Date :</strong> {{ order.createdAt|date('d-m-Y') }}</li>
+            <li><strong>Montant total de produits :</strong> {{ order.totalPrice - order.transportPrice }} €</li>
+            <li><strong>Montant de livraison :</strong> {{ order.transportPrice }} €</li>
+            <li><strong>Montant total :</strong> {{ order.totalPrice }} €</li>
+        </ul>
+
+        <div class="table-container">
+            <h3>Produits achetés :</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th style="text-align: right;">Quantité</th>
+                        <th style="text-align: right;">Prix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detail in orderDetails %}
+                    <tr>
+                        <td>{{ detail.productName }}</td>
+                        <td style="text-align: right;">{{ detail.quantity }}</td>
+                        <td style="text-align: right;">{{ detail.price }} €</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p style="margin-top: 20px;">Nous espérons vous revoir bientôt.</p>
+    </div>
+{% endblock %}  

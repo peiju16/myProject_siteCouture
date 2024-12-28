@@ -6,7 +6,9 @@ use App\Entity\User;
 use App\Form\ResetPasswordType;
 use App\Form\UserType;
 use App\Repository\FormationRepository;
+use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
+use App\Repository\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -103,13 +105,14 @@ class UserController extends AbstractController
     /**
      * afficher les produits et les formations que l'utilisateur ont achetés
      *
-     * @param  mixed $productRepository
+     * @param  mixed $orderRepository
+     * @param  mixed $reservationRepository
      * @param  mixed $paginator
      * @param  mixed $request
      * @return Response
      */
     #[Route('/user/order', name: 'app_user_order', methods: ['GET'])]    
-    public function userOrder(ProductRepository $productRepository, FormationRepository $formationRepository, PaginatorInterface $paginator, Request $request, TokenStorageInterface $token): Response
+    public function userOrder(PaginatorInterface $paginator, Request $request, OrderRepository $orderRepository, ReservationRepository $reservationRepository): Response
     {
       
         $user = $this->getUser();
@@ -117,16 +120,25 @@ class UserController extends AbstractController
             throw $this->createAccessDeniedException('Veuillez se connecter.');
         }
 
-        $productPage = $request->query->getInt('productPage', 1);
-        $formationPage = $request->query->getInt('formationPage', 1);
+        $page = $request->query->getInt('page', 1); 
 
-        $products = $paginator->paginate($productRepository->findProductsByUser($user->getId()), $productPage, 6);
-        $formations = $paginator->paginate($formationRepository->findFormationsByUser($user->getId()), $formationPage, 6);
+        $orders = $paginator->paginate(
+            $orderRepository->findBy(['user' => $user]), 
+            $page, 
+            6 
+        );
 
-    
+        $formations = $paginator->paginate(
+            $reservationRepository->findFormationsByUser($user), 
+            $page, 
+            6 
+        );
+
+        
+
         return $this->render('user/order.html.twig', [
-            'produits' => $products,
-            'formations' => $formations
+            'orders' => $orders,
+            'formations' => $formations,
         ]);
     }
 }

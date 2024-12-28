@@ -60,23 +60,22 @@ class Formation
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $UpdateAt = null;
 
-
-    /**
-     * @var Collection<int, User>
-     */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'formation')]
-    private Collection $users;
-
     /**
      * @var Collection<int, Point>
      */
     #[ORM\OneToMany(targetEntity: Point::class, mappedBy: 'formation', orphanRemoval: true)]
     private Collection $points;
 
+    /**
+     * @var Collection<int, Reservation>
+     */
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'formation')]
+    private Collection $reservations;
+
     public function __construct()
     {
-        $this->users = new ArrayCollection();
         $this->points = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -206,34 +205,6 @@ class Formation
         $this->UpdateAt = new \DateTimeImmutable();
     }
 
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(User $user): static
-    {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->addFormation($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): static
-    {
-        if ($this->users->removeElement($user)) {
-            $user->removeFormation($this);
-        }
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Point>
      */
@@ -258,6 +229,36 @@ class Formation
             // set the owning side to null (unless already changed)
             if ($point->getFormation() === $this) {
                 $point->setFormation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): static
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): static
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            // set the owning side to null (unless already changed)
+            if ($reservation->getFormation() === $this) {
+                $reservation->setFormation(null);
             }
         }
 

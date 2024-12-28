@@ -11,21 +11,16 @@
                         <!-- ***** Logo End ***** -->
                         <!-- ***** Menu Start ***** -->
                         <ul class="nav">
-                            <li class="scroll-to-section"><a href="{{ path('app_home') }}" class="active">Accueil</a></li>                        
-                            <li class="submenu">
-                                <a href="javascript:;">Nos produits</a>
-                                <ul>
-                                    <li><a href="{{ path('app_product') }}">Nos produits</a></li>
-                                    <li><a href="{{ path('app_formation') }}">Nos formations</a></li>
-                                </ul>
-                            </li>
+                            <li class="scroll-to-section"><a href="{{ path('app_home') }}" {% if app.request.getPathInfo() == '/' %}class="active"{% endif %}>Accueil</a></li>
+                            <li><a href="{{ path('app_product') }}" {% if app.request.getPathInfo() == '/product' %}class="active"{% endif %}>Nos produits</a></li>
+                            <li><a href="{{ path('app_formation') }}" {% if app.request.getPathInfo() == '/formation' %}class="active"{% endif %}>Nos formations</a></li>                            
                             {% if not app.user %}
-                            <li class="scroll-to-section"><a href="{{ path('app_registration') }}">Inscription</a></li>
+                            <li class="scroll-to-section"><a href="{{ path('app_registration') }}" {% if app.request.getPathInfo() == '/inscription' %}class="active"{% endif %}>Inscription</a></li>
                             {% endif %}  
                             <!-- <li class=""><a rel="sponsored" href="https://templatemo.com" target="_blank">External URL</a></li> -->
                             <li class="scroll-to-section"><a href="#reservation">Contactez-nous</a></li> 
                             <li class="submenu">
-                                <a href="javascript:;">Mon Compte</a>
+                                <a href="javascript:;" {% if app.request.getPathInfo() == '/user' or app.request.getPathInfo() == '/cart'  %}class="active"{% endif %}>Mon Compte</a>
                                 <ul>
                                     {% if not app.user %}
                                     <li><a href="{{ path('app_login') }}">Se Connecter</a></li>
@@ -33,13 +28,14 @@
                                     
                                     {% if app.user %}
                                     <li><a href="{{ path('app_user') }}">Profile</a></li>
+                                    <li><a href="#">Mes Commandes</a></li>
                                     <li><a href="{{ path('app_cart') }}">Mon Panier</a></li>
                                     <li><a href="{{ path('app_logout') }}">Se Déconnecter</a></li>
                                     {% endif %}
                                 </ul>
                             </li>
                             {% if app.user and 'ROLE_ADMIN' in app.user.getRoles() %}                         
-                            <li><a href="{{ path('admin') }}">Back Office</a></li>
+                            <li><a href="{{ path('admin') }}" app.request.getPathInfo() == '/admin'>Back Office</a></li>
                             {% endif %}
                         </ul>        
                         <a class='menu-trigger'>
