@@ -18,15 +18,39 @@ class CartService
         $this->manager = $manager;
     }
 
-    public function addCart(int $id): void {
+    public function addCart(int $id, int $quantity): void
+    {
         $cart = $this->getSession()->get('cart', []);
-        if (!empty($cart[$id])) { // Correctly check if the product exists
-            $cart[$id]++;
-        } else {
-            $cart[$id] = 1;
+
+        // Fetch the product to check stock availability
+        $product = $this->manager->getRepository(Product::class)->find($id);
+
+        if ($product === null) {
+            throw new \InvalidArgumentException('Produit n\'exsist pas.');
         }
+
+        if (!empty($cart[$id])) {
+            // Increment quantity only if it's within stock limits
+            $newQuantity = $cart[$id] + $quantity;
+
+            if ($newQuantity > $product->getStock()) {
+                throw new \InvalidArgumentException('La quantity commndée dépasse le stock.');
+            }
+
+            $cart[$id] = $newQuantity;
+        } else {
+            // Add product with the specified quantity if within stock limits
+            if ($quantity > $product->getStock()) {
+                throw new \InvalidArgumentException('La quantity commndée dépasse le stock.');
+            }
+
+            $cart[$id] = $quantity;
+        }
+
         $this->getSession()->set('cart', $cart);
     }
+
+    
     
     public function decrease(int $id): void {
         $cart = $this->getSession()->get('cart', []);

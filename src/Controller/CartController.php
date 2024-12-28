@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Service\CartService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -18,12 +19,22 @@ class CartController extends AbstractController
         ]);
     }
 
-    #[Route('/cart/add/{id<\d+>}', name: 'app_cart_add' )]
-    public function add(CartService $cartService, int $id): Response
+    #[Route('/cart/add/{id<\d+>}', name: 'app_cart_add')]
+    public function add(CartService $cartService, Request $request, int $id): Response
     {
-        $cartService->addCart($id);
+        try {
+            // Retrieve the quantity from the query parameter (default to 1 if not set)
+            $quantity = (int) $request->query->get('quantity', 1);
+    
+            // Pass both the product ID and quantity to the service
+            $cartService->addCart($id, $quantity);
+        } catch (\InvalidArgumentException $e) {
+            $this->addFlash('error', $e->getMessage());
+        }
+    
         return $this->redirectToRoute('app_cart');
     }
+    
 
     #[Route('/cart/decrease/{id<\d+>}', name: 'app_cart_decrease' )]
     public function decrease(CartService $cartService, int $id): RedirectResponse

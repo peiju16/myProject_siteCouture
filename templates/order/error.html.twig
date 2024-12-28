@@ -5,6 +5,7 @@
 {% block body %}
 
 <div class="container mt-5">
+ <div>{{error}}</div>
     <div class="alert alert-danger text-center" role="alert">
         <h1 class="display-4">Oups ! Un problème est survenu avec votre paiement.</h1>
         <p class="lead">Nous n'avons pas pu traiter votre paiement. Veuillez vérifier les détails et réessayer.</p>
@@ -16,7 +17,7 @@
             <li>- Contacter votre banque ou votre fournisseur de paiement.</li>
             <li>- Essayer une autre méthode de paiement.</li>
         </ul>
-        <a href="{{ path('app_payment_retry') }}" class="btn btn-primary mt-3">Réessayer le paiement</a>
+        <a href="{{ path('app_payment_retry', { reference : reference }) }}" class="btn btn-primary mt-3">Réessayer le paiement</a>
         <a href="#" class="btn btn-secondary mt-3">Contacter le support</a>
         <a href="{{ path('app_order_modify', { reference : reference }) }}" class="btn btn-info mt-3">Modifier le mode de paiment</a>
     </div>

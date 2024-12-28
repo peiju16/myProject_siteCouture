@@ -7,6 +7,7 @@ use App\Entity\ProductImage;
 use App\Form\ImageType;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
+use App\Service\CartService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -16,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class ProductController extends AbstractController
 {
@@ -35,12 +37,13 @@ class ProductController extends AbstractController
     }
 
     #[Route('/product/{id}', name: 'app_product_show', methods: ['GET'])]
-    public function show(Product $product, EntityManagerInterface $manager, int $id): Response
+    public function show(Product $product, SessionInterface $session): Response
     {
-       
+        $cart = $session->get('cart', []); // Default to an empty array if 'cart' is not set
+    
         return $this->render('product/show.html.twig', [
             'product' => $product,
-           
+            'cart' => $cart,
         ]);
     }
 

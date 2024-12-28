@@ -54,25 +54,26 @@
             {{ form_row(orderForm.receiverPhone) }}
             {{ form_errors(orderForm.receiverPhone) }}
         </div>
-    
-        <div class="form-group col-lg-8">
-            {{ form_row(orderForm.useSavedAddress) }}
-            {{ form_errors(orderForm.useSavedAddress) }}
-        </div>
         
         <div class="form-group col-lg-8">
             {{ form_row(orderForm.paymentMethod) }}
             {{ form_errors(orderForm.paymentMethod) }}
         </div>
     
-        <div id="savedAddressFields" style="display: none;">
-            <div class="form-group col-lg-8">
-                {{ form_row(orderForm.savedAddress) }}
-                {{ form_errors(orderForm.savedAddress) }}
-            </div>
-        </div>
-    
         <div id="customAddressFields" style="display: block;">
+             
+            <div class="form-group col-lg-8">
+                {{ form_row(orderForm.useSavedAddress) }}
+                {{ form_errors(orderForm.useSavedAddress) }}
+            </div>
+
+            <div id="savedAddressFields" style="display: none;">
+                <div class="form-group col-lg-8">
+                    {{ form_row(orderForm.savedAddress) }}
+                    {{ form_errors(orderForm.savedAddress) }}
+                </div>
+            </div>
+
             <div class="form-group col-lg-8">
                 {{ form_row(orderForm.addressTitle) }}
                 {{ form_errors(orderForm.addressTitle) }}

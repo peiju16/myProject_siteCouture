@@ -88,7 +88,7 @@ class PaymentController extends AbstractController
           ], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
 
-        $order->setStripSessionId($checkout_session->Id);
+        $order->setStripSessionId($checkout_session->id);
         $manager->flush();
 
         return new RedirectResponse($checkout_session->url);
@@ -98,7 +98,7 @@ class PaymentController extends AbstractController
     }
 
     #[Route('/payment/create-session-paypal/{reference}', name: 'app_payment_paypal')]
-    public function createOrder(Request $request, EntityManagerInterface $manager, $reference, UrlGeneratorInterface $generator): RedirectResponse
+    public function createOrder(Request $request, EntityManagerInterface $manager, $reference, UrlGeneratorInterface $generator): Response
     {
 
          $order = $manager->getRepository(Order::class)->findOneBy(['reference' => $reference]);
@@ -161,20 +161,23 @@ class PaymentController extends AbstractController
             $client = $this->paypalService->getClient();
             $response = $client->execute($request);
             $result = $response->result;
-            $order->setPaypalOrderId($response->result->Id);
+            $order->setPaypalOrderId($response->result->id);
             $manager->flush();
             // Redirect to PayPal checkout page
             return $this->redirect($result->links[1]->href);
         } catch (Exception $e) {
             // Handle exceptions
-            return $this->render('order/error.html.twig', ['error' => $e->getMessage()]);
+            return $this->render('order/error.html.twig', [
+                'error' => $e->getMessage(),
+                'reference' => $order->getReference(),
+            ]);
         }
         
      }
  
     
      #[Route('/payment/success/{reference}', name: 'app_payment_success')]
-     public function paypalSuccess(
+     public function paymentSuccess(
          string $reference,
          CartService $cartService,
          EntityManagerInterface $manager,
@@ -210,7 +213,7 @@ class PaymentController extends AbstractController
                     'orderDetails' => $order->getOrderDetails(),
                     'transport' => $transportData
                 ],
-                './images/factures',
+                './factures',
                 sprintf('invoice_%d_%d.pdf', $invoice->getId(), $this->getUser()->getId())
             );
             
@@ -252,13 +255,15 @@ class PaymentController extends AbstractController
      
  
      #[Route('/payment/error/{reference}', name: 'app_payment_error')]
-     public function paypalError($reference, CartService $cartService, EntityManagerInterface $manager): Response
+     public function paymentError($reference, CartService $cartService, EntityManagerInterface $manager): Response
      {
          $order = $manager->getRepository(Order::class)->findOneBy(['reference' => $reference]);
          if (!$order || $order->getUser() !== $this->getUser()) {
              return $this->redirectToRoute('app_cart');
          }
-         return $this->render('order/error.html.twig');
+         return $this->render('order/error.html.twig', [
+            'reference' => $reference,
+         ]);
      }
 
      #[Route('/payment/retry/{reference}', name: 'app_payment_retry')]

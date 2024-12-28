@@ -11,8 +11,17 @@
                         <h6>Nos Produits</h6>
                         <h2>{{ product.name }}</h2>
                         <h4>{{ product.price }} €</h4>
-                        <div class="text-right">
-                            <a href="{{ path('app_cart_add', {id: product.id})}}" class="btn btn-dark my-2 text-right" tabindex="-1" role="button">Ajouter au panier</a>
+                        <div class="text-right my-3">
+                            {% if product.stock > 0 %}
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <button class="btn btn-outline-dark" id="decrease-quantity" {% if cart is not null and cart[product.id] is defined and cart[product.id] == 1 %}disabled{% endif %}>-</button>
+                                    <input type="number" id="quantity" value="{{ cart[product.id] ?? 1 }}" min="1" max="{{ product.stock }}" class="form-control text-center mx-2" style="width: 60px;" readonly>
+                                    <button class="btn btn-outline-dark" id="increase-quantity" {% if cart is not null and cart[product.id] is defined and cart[product.id] >= product.stock %}disabled{% endif %}>+</button>
+                                </div>
+                                <button class="btn btn-dark mt-2" id="add-to-cart" data-url="{{ path('app_cart_add', { id: product.id }) }}">Ajouter au panier</button>
+                            {% else %}
+                                <button class="btn btn-danger mt-2" disabled>Rupture de stock</button>
+                            {% endif %}
                         </div>
                     </div>
                     <p>{{ product.description }}</p>
@@ -48,6 +57,50 @@
     </div>
 </section>
 
+
+<script>
+    // JavaScript to handle quantity increment, decrement, and add to cart
+    document.addEventListener('DOMContentLoaded', function () {
+        const decreaseButton = document.getElementById('decrease-quantity');
+        const increaseButton = document.getElementById('increase-quantity');
+        const quantityInput = document.getElementById('quantity');
+        const addToCartButton = document.getElementById('add-to-cart');
+
+        const maxStock = {{ product.stock }};
+        const currentCartQuantity = {{ cart[product.id] ?? 1 }};
+        
+        decreaseButton.addEventListener('click', function () {
+            let quantity = parseInt(quantityInput.value);
+            if (quantity > 1) {
+                quantity -= 1;
+                quantityInput.value = quantity;
+                if (quantity === 1) {
+                    decreaseButton.disabled = true;
+                }
+                increaseButton.disabled = false;
+            }
+        });
+
+        increaseButton.addEventListener('click', function () {
+            let quantity = parseInt(quantityInput.value);
+            if (quantity < maxStock) {
+                quantity += 1;
+                quantityInput.value = quantity;
+                if (quantity === maxStock) {
+                    increaseButton.disabled = true;
+                }
+                decreaseButton.disabled = false;
+            }
+        });
+
+        addToCartButton.addEventListener('click', function () {
+            const quantity = parseInt(quantityInput.value);
+            const url = '{{ path('app_cart_add', { id: product.id }) }}' + '?quantity=' + quantity;
+
+            window.location.href = url; // Redirect to add to cart with the desired quantity
+        });
+    });
+</script>
 
 
 

@@ -101,18 +101,34 @@ class OrderController extends AbstractController
             $order->setPaymentMethod($paymentMethod);
             
             $entityManager->persist($order);
-    
-            // Set Order details
+
+             // Check stock and adjust quantities
             foreach ($cartService->getTotalCart()['items'] as $product) {
+                $productEntity = $product['product'];
+                $orderedQuantity = $product['quantity'];
+
+                if ($productEntity->getStock() < $orderedQuantity) {
+                    // Insufficient stock, handle this case
+                    $this->addFlash(
+                        'error',
+                        sprintf('Stock insuffisant pour le produit %s.', $productEntity->getName())
+                    );
+                    return $this->redirectToRoute('app_cart');
+                }
+
+                // Decrease stock
+                $productEntity->setStock($productEntity->getStock() - $orderedQuantity);
+
+                // Set order details
                 $orderdetails = new OrderDetails();
                 $orderdetails->setOrderNumber($order);
-                $orderdetails->setQuantity($product['quantity']);
-                $orderdetails->setPrice($product['product']->getPrice());
-                $orderdetails->addProduct($product['product']);
-                $orderdetails->setProductName($product['product']->getName());
+                $orderdetails->setQuantity($orderedQuantity);
+                $orderdetails->setPrice($productEntity->getPrice());
+                $orderdetails->addProduct($productEntity);
+                $orderdetails->setProductName($productEntity->getName());
                 $entityManager->persist($orderdetails);
             }
-    
+
             $entityManager->flush();
 
             return $this->render('order/recap.html.twig', [

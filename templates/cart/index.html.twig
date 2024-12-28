@@ -87,10 +87,25 @@ th {
                             <td> {{ item.product.price }}</td> 
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <a href="{{ path('app_cart_decrease', {id: item.product.id}) }}" class="btn btn-sm btn-outline-secondary me-2">-</a>
-                                    <input type="number" class="form-control text-center p-0 m-0" value="{{ item.quantity }}" style="width: 50px;" readonly>
-                                    <a href="{{ path('app_cart_add', {id: item.product.id}) }}" class="btn btn-sm btn-outline-secondary ms-2">+</a>
+                                    <!-- Decrease Button -->
+                                    <a href="{{ path('app_cart_decrease', {id: item.product.id}) }}"
+                                        class="btn btn-sm btn-outline-secondary me-2"
+                                        {% if item.quantity <= 1 %}disabled{% endif %}>
+                                        -
+                                    </a>
+                                
+                                    <!-- Quantity Input -->
+                                    <input type="number" class="form-control text-center p-0 m-0"
+                                        value="{{ item.quantity }}" style="width: 50px;" readonly>
+                                
+                                    <!-- Increase Button -->
+                                    <a href="{{ path('app_cart_add', {id: item.product.id}) }}"
+                                        class="btn btn-sm btn-outline-secondary ms-2"
+                                        {% if item.quantity >= item.product.stock %}disabled{% endif %}>
+                                        +
+                                    </a>
                                 </div>
+                                
                             </td>                        
                             <td>{{ item.product.price * item.quantity }} €</td>
                             <td><a href="{{ path('app_cart_remove', {id: item.product.id}) }}" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Supprimer"><i class="fa fa-trash"></i></a></td>  
