@@ -72,6 +72,10 @@
                             <td colspan="3" class="text-right"><strong>Total Général:</strong></td>
                             <td><strong>{{ cartData.cartTotal + transporter.price }} €</strong></td>
                         </tr>
+                        <tr>
+                            <td colspan="3" class="text-right">Dont TVA:</td>
+                            <td>{{ (cartData.cartTotal + transporter.price) * 0.2 }} €</td>
+                        </tr>
                     </tfoot>
                 </table>
                 {% else %}

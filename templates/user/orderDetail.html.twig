@@ -1,0 +1,125 @@
+{% extends 'template.html.twig' %}
+{% block title %}Kaëlysse Couture - User Orders{%endblock %}
+
+{% block body %}
+
+{% include "nav.html.twig" %}
+
+<section class="section" id="menu">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 offset-lg-4 text-center">
+                <div class="section-heading">
+                    <h6>Mon Compte</h6>
+                    <h2>Ma Detail de la commande</h2>
+                    <a href="{{ path('app_user_order') }}" class="text-dark">Retour</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4" style="min-height: auto">
+            <div class="card-header text-white" style="background-color: #fb5849;">Information</div>
+            <div class="card-body">
+                <p><strong>Numéro de Facture:</strong> {{ invoice is not null ? invoice.id : '-' }}</p>
+                <p><strong>Status:</strong> {{ order.status }}</p>
+                {% if invoice and invoice.isPdf == 1 %}
+                <a href="{{ path('app_user_orderDetail_invoice', { id : order.id })}}" class="text-danger"><strong>Télécharger Facture</strong></a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mb-4" style="min-height: auto">
+            <div class="card-header text-white" style="background-color: #fb5849;">Mode de livraison</div>
+            <div class="card-body">
+                <p><strong>Mode:</strong> {{ transportway.title }}</p>
+                <p><strong>délai:</strong> {{ transportway.content}}</p>
+                <p><strong>Prix:</strong> {{ transportway.price }} €</p>
+            </div>
+        </div>
+
+        <div class="card mb-4" style="min-height: auto">
+            <div class="card-header text-white" style="background-color: #fb5849;">Adresse de livraison</div>
+            <div class="card-body">
+                <p><strong>Nom:</strong> {{ order.receiverName }}</p>
+                <p><strong>Adresse:</strong> {{ order.receiverAddress }}</p>
+                <p><strong>Ville:</strong> {{ order.city }}</p>
+                <p><strong>Code Postal:</strong> {{ order.zipCode }}</p>
+            </div>
+        </div>
+
+        <div class="card mb-4" style="min-height: auto">
+            <div class="card-header text-white" style="background-color: #fb5849;">Mode de payment</div>
+            <div class="card-body">
+                <p><strong>Mode de payment:</strong> {{ order.paymentMethod }}</p>
+            </div>
+        </div>
+
+
+        <div class="card mb-4">
+            <div class="card-header text-white" style="background-color: #fb5849;">Récapitulatif des Produits</div>
+            <div class="card-body">
+                {% if orderDetails is not empty %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Prix Unitaire</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detail in orderDetails %}
+                        <tr>
+                            <td>{{ detail.productName }}</td>
+                            <td>{{ detail.price }} €</td>
+                            <td>{{ detail.quantity }}</td>
+                            <td>{{ detail.price * detail.quantity }} €</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Total Produits:</strong></td>
+                            <td>{{ order.totalPrice - order.transportPrice }} €</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Frais de Livraison:</strong></td>
+                            <td>{{ transportway.price }} €</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Total Général TTC:</strong></td>
+                            <td><strong>{{ order.totalPrice }} €</strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right">Dont TVA:</td>
+                            <td>{{ order.totalPrice * 0.2 }} €</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                {% else %}
+                <p>Votre recap est vide.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if order.isPaid == 0 %}
+        <div class="text-center mb-4">
+            <p>Finaliser votre commande.</p>
+            <a href="{{ path('app_payment_retry', { reference : order.reference }) }}" class="btn btn-warning">Payer</a>
+            <p>Supprimer l'historique</p>
+            <a href="{{ path('app_order_delete', { id : order.id }) }}" class="btn btn-danger">Supprimer</a>
+        </div>
+        {% endif %}
+
+
+
+    </div>
+</section>
+
+
+
+
+
+{% include "footer.html.twig" %} 
+{% endblock %}

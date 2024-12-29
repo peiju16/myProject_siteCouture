@@ -28,7 +28,8 @@
                                     
                                     {% if app.user %}
                                     <li><a href="{{ path('app_user') }}">Profile</a></li>
-                                    <li><a href="#">Mes Commandes</a></li>
+                                    <li><a href="{{ path('app_user_order') }}">Mes Commandes</a></li>
+                                    <li><a href="{{ path('app_user_formation') }}">Mes Formations</a></li>
                                     <li><a href="{{ path('app_cart') }}">Mon Panier</a></li>
                                     <li><a href="{{ path('app_logout') }}">Se Déconnecter</a></li>
                                     {% endif %}

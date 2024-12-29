@@ -138,6 +138,10 @@
                 <td colspan="3" style="text-align: right;">Total :</td>
                 <td style="text-align: right;">{{ order.totalPrice }} €</td>
             </tr>
+            <tr class="total-row">
+                <td colspan="3" style="text-align: right;">Dont TVA :</td>
+                <td style="text-align: right;">{{ order.totalPrice * 0.2 }} €</td>
+            </tr>
         </table>
 
         <!-- Footer -->

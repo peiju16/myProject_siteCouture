@@ -2,6 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Invoice;
+use App\Entity\Order;
+use App\Entity\OrderDetails;
+use App\Entity\Transport;
 use App\Entity\User;
 use App\Form\ResetPasswordType;
 use App\Form\UserType;
@@ -14,6 +18,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -106,13 +111,12 @@ class UserController extends AbstractController
      * afficher les produits et les formations que l'utilisateur ont achetés
      *
      * @param  mixed $orderRepository
-     * @param  mixed $reservationRepository
      * @param  mixed $paginator
      * @param  mixed $request
      * @return Response
      */
     #[Route('/user/order', name: 'app_user_order', methods: ['GET'])]    
-    public function userOrder(PaginatorInterface $paginator, Request $request, OrderRepository $orderRepository, ReservationRepository $reservationRepository): Response
+    public function userOrder(PaginatorInterface $paginator, Request $request, OrderRepository $orderRepository): Response
     {
       
         $user = $this->getUser();
@@ -120,25 +124,77 @@ class UserController extends AbstractController
             throw $this->createAccessDeniedException('Veuillez se connecter.');
         }
 
-        $page = $request->query->getInt('page', 1); 
 
         $orders = $paginator->paginate(
             $orderRepository->findBy(['user' => $user]), 
-            $page, 
-            6 
+            $request->query->getInt('page', 1),
+            12 
         );
-
-        $formations = $paginator->paginate(
-            $reservationRepository->findFormationsByUser($user), 
-            $page, 
-            6 
-        );
-
-        
 
         return $this->render('user/order.html.twig', [
             'orders' => $orders,
+        ]);
+    }
+
+    #[Route('/user/formation', name: 'app_user_formation', methods: ['GET'])]    
+    public function userFormation(PaginatorInterface $paginator, Request $request, ReservationRepository $reservationRepository): Response
+    {
+      
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('Veuillez se connecter.');
+        }
+
+        $formations = $paginator->paginate(
+            $reservationRepository->findFormationsByUser($user), 
+            $request->query->getInt('page', 1), 
+            12
+        );
+
+        return $this->render('user/formation.html.twig', [
             'formations' => $formations,
         ]);
     }
+
+    #[Route('/user/order_detail/{id}', name: 'app_user_orderDetail', methods: ['GET'])]    
+    public function userOrderDetail(Order $order, EntityManagerInterface $manager): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');;
+        }
+
+        $orderDetails = $manager->getRepository(OrderDetails::class)->findBy(criteria: ['orderNumber' => $order->getId()]);
+        $invoice = $manager->getRepository(Invoice::class)->findOneBy(criteria: ['orderInvoice' => $order->getId()]);
+        $transportway = $manager->getRepository(Transport::class)->findOneBy(criteria: ['id' => $order->getTransportWay()]);
+ 
+
+        return $this->render('user/orderDetail.html.twig', [
+            'user' => $user,
+            'order' => $order,
+            'orderDetails' => $orderDetails,
+            'invoice' => $invoice,
+            'transportway' => $transportway
+        ]);
+    }
+
+    #[Route('/user/order_detail/{id}/download-invoice', name: 'app_user_orderDetail_invoice', methods: ['GET'])]
+    public function downloadInvoice(Order $order, EntityManagerInterface $manager): Response
+    {
+        if (!$this->getUser() || $order->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Access Denied.');
+        }
+
+        $invoice = $manager->getRepository(Invoice::class)->findOneBy(criteria: ['orderInvoice' => $order->getId()]);
+        // **Get the existing invoice path**
+        $invoicePath = $invoice->getPdfPath();
+
+        // Create a BinaryFileResponse to directly download the file
+        $response = new BinaryFileResponse($invoicePath);
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'attachment; filename="invoice_' . $order->getId() . '.pdf"'); 
+
+        return $response;
+    }
+
 }

@@ -3,6 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Formation;
+use App\Entity\Invoice;
+use App\Entity\Order;
+use App\Entity\OrderDetails;
 use App\Entity\Product;
 use App\Entity\Transport;
 use App\Entity\User;
@@ -51,7 +54,11 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Produits', 'fas fa-list', Product::class);
         yield MenuItem::linkToCrud('Formations', 'fas fa-list', Formation::class);
-        yield MenuItem::linkToCrud('Users', 'fas fa-list', User::class);
-        yield MenuItem::linkToCrud('Transports', 'fas fa-list', Transport::class);
+        yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-list', User::class);
+        yield MenuItem::linkToCrud('Livraison', 'fas fa-list', Transport::class);
+        yield MenuItem::linkToCrud('Commandes', 'fas fa-shopping-cart', Order::class);
+        yield MenuItem::linkToCrud('Commande Details', 'fas fa-list', OrderDetails::class);
+        yield MenuItem::linkToCrud('Factures', 'fas fa-list', Invoice::class);
+
     }
 }

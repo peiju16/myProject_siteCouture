@@ -1,8 +1,8 @@
 {% extends 'template.html.twig' %}
-
-{% block title %}Kaëlysse Couture - Orders{% endblock %}
+{% block title %}Kaëlysse Couture - User Orders{%endblock %}
 
 {% block body %}
+
 {% include "nav.html.twig" %}
 
 <!-- ***** Menu Area Starts ***** -->
@@ -13,143 +13,38 @@
                 <div class="section-heading">
                     <h6>PROFILE</h6>
                     <h2>Vos Commandes</h2>
-                    <a href="{{ path('app_user') }}" class="text-dark">Retour</a>
+                    <a href="{{ path('app_user_formation') }}" class="text-dark">Voir Mes Formation</a>
                 </div>
             </div>
         </div>
+        {% include "flash.html.twig" %}
         <div class="row">
             <div class="col-lg-12">
-                <div class="row" id="tabs">
-                    <div class="col-lg-12">
-                        <div class="heading-tabs">
-                            <div class="row">
-                                <div class="col-lg-6 offset-lg-3">
-                                    <ul>
-                                      <li><a href='#tabs-1'>Commandes</a></li>
-                                      <li><a href='#tabs-2'>Formations</a></li>
-                                    </ul>
+                <section class="tabs-content d-flex justify-content-center">
+                    <div class="row justify-content-between">
+                        {% if orders %}
+                            {% for order in orders %}
+                                <div class="tab-item mr-2 bg-secondary p-2">
+                                    <h4>{{order.createdAt|date('d-m-Y')}}</h4>
+                                    <span class="badge badge-info">{{ order.status }}</span>
+                                    <br>
+                                    <a href="{{ path('app_user_orderDetail', { id : order.id }) }}" class="ml-1 font-weight-light">Voir detail</a>
+                                    <div class="price">
+                                        <h6>{{ order.totalPrice }} €</h6>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            {% endfor %} 
+                        {% endif %}
                     </div>
-                    <div class="col-lg-12">
-                        <section class='tabs-content d-flex justify-content-center'>
-                            <article id='tabs-1'>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="row">
-                                            <div class="left-list">
-                                                {% if orders %}
-                                                    {% for order in orders %}
-                                                        {% if loop.index <= 3 %}
-                                                            <div class="col-lg-12">
-                                                                <div class="tab-item">
-                                                                    <img src="#" alt="">
-                                                                    <h4>{{order.createdAt|date('d-m-Y')}}</h4>
-                                                                    <p>{{order.status}}</p>
-                                                                    <div class="price">
-                                                                        <h6>{{order.totalPrice}} €</h6>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="row">
-                                            <div class="right-list">
-                                                {% if orders %}
-                                                    {% for order in orders %}
-                                                        {% if loop.index > 3 %}
-                                                            <div class="col-lg-12">
-                                                                <div class="tab-item">
-                                                                    <img src="#" alt="">
-                                                                    <h4>{{order.createdAt|date('d-m-Y')}}</h4>
-                                                                    <p>{{order.status}}</p>
-                                                                    <div class="price">
-                                                                        <h6>{{order.totalPrice}} €</h6>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% endif %}     
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="navigation d-flex justify-content-center mt-4">
-                                    {{ knp_pagination_render(orders) }}
-                                </div>
-                            </article>  
-                            <article id='tabs-2'>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="row">
-                                            <div class="left-list">
-                                                {% if formations %}
-                                                    {% for formation in formations %}
-                                                        {% if loop.index <= 3 %}
-                                                            <div class="col-lg-12">
-                                                                <div class="tab-item">
-                                                                    <img src="#" alt="">
-                                                                    <h4>{{formation.name}}</h4>
-                                                                    <p>{{formation.description}}</p>
-                                                                    <p>{{formation.date|date('d/m/Y, H:i')}}</p>
-                                                                    <div class="price">
-                                                                        <h6>{{formation.price}} €</h6>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% endif %}     
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="row">
-                                            <div class="right-list">
-                                                {% if formations %}
-                                                    {% for formation in formations %}
-                                                        {% if loop.index > 3 %}
-                                                            <div class="col-lg-12">
-                                                                <div class="tab-item">
-                                                                    <img src="#" alt="">
-                                                                    <h4>{{formation.name}}</h4>
-                                                                    <p>{{formation.description}}</p>
-                                                                    <p>{{formation.date|date('d/m/Y, H:i')}}</p>
-                                                                    <div class="price">
-                                                                        <h6>{{formation.price}} €</h6>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% endif %}         
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="navigation d-flex justify-content-center mt-4">
-                                    {{ knp_pagination_render(formations) }}
-                                </div>
-                            </article>  
-                        </section>
-                    </div>
+                </section>
+                <div class="navigation d-flex justify-content-center mt-4">
+                    {{ knp_pagination_render(orders) }}
                 </div>
             </div>
         </div>
     </div>
 </section>
-<!-- ***** Chefs Area Ends ***** --> 
+<!-- ***** Chefs Area Ends ***** -->
 
-
-
-
-
-{% include "footer.html.twig" %}
+{% include "footer.html.twig" %} 
 {% endblock %}

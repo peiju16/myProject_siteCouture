@@ -53,6 +53,11 @@ class Transport
     #[ORM\Column]
     private ?bool $isPickup = null;
 
+    public function __toString(): string
+    {
+        return $this->title ?? 'N/A';
+    }
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();

@@ -165,6 +165,8 @@ class OrderController extends AbstractController
         $reference
     ): Response {
         $order = $manager->getRepository(Order::class)->findOneBy(['reference' => $reference]);
+        $orderDetails = $manager->getRepository(OrderDetails::class)->findBy(criteria: ['orderNumber' => $order->getId()]);
+
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
@@ -191,7 +193,38 @@ class OrderController extends AbstractController
             'cartData' => $cartService->getTotalCart(),
             'order' => $order,
             'isModify' => true,
+            'orderDetails' => $orderDetails,
         ]);
+    }
+
+    #[Route('/order/delete/{id}', name: 'app_order_delete', methods: ['GET', 'DELETE'])]
+    public function deleteOrder(Order $order, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($order->getUser() !== $user) {
+            $this->addFlash('error', 'Vous ne pouvez pas supprimer cette commande.');
+            return $this->redirectToRoute('app_user_order');
+        }
+
+        if ($order->isPaid()) {
+            $this->addFlash('error', 'Impossible de supprimer une commande déjà payée.');
+            return $this->redirectToRoute('app_user_order');
+        }
+
+        // Remove related order details
+        foreach ($order->getOrderDetails() as $orderDetail) {
+            $entityManager->remove($orderDetail);
+        }
+
+        $entityManager->remove($order);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Commande supprimée avec succès.');
+        return $this->redirectToRoute('app_user_order');
     }
 
     

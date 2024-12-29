@@ -16,6 +16,7 @@
             <li><strong>Montant total de produits :</strong> {{ order.totalPrice - order.transportPrice }} €</li>
             <li><strong>Montant de livraison :</strong> {{ order.transportPrice }} €</li>
             <li><strong>Montant total :</strong> {{ order.totalPrice }} €</li>
+            <li>Dont TVA : {{ order.totalPrice * 0.2 }} €</li>
         </ul>
 
         <div class="table-container">

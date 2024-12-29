@@ -1,0 +1,52 @@
+{% extends 'template.html.twig' %}
+{% block title %}Kaëlysse Couture - User Formations{%endblock %}
+
+{% block body %}
+
+{% include "nav.html.twig" %}
+
+<!-- ***** Menu Area Starts ***** -->
+<section class="section" id="offers">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 offset-lg-4 text-center">
+                <div class="section-heading">
+                    <h6>PROFILE</h6>
+                    <h2>Vos Formations</h2>
+                    <a href="{{ path('app_user_order') }}" class="text-dark">Voir Mes Commandes</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <section class="tabs-content d-flex justify-content-center">
+                    <div class="row justify-content-between">
+                        {% if formations %}
+                            {% for formation in formations %}
+                                <div class="tab-item mr-3">
+                                    <h4>{{formation.name}}</h4>
+                                    <p>{{formation.description}}</p>
+                                    <p>{{formation.date|date('d/m/Y, H:i')}}</p>
+                                    {% if formation.date < date('now') %}
+                                        <span class="badge badge-danger">Terminé</span>
+                                    {% else %}
+                                        <span class="badge badge-info">À venir</span>
+                                    {% endif %}
+                                    <div class="price">
+                                        <h6>{{formation.price}} €</h6>
+                                    </div>
+                                </div>
+                            {% endfor %} 
+                        {% endif %}
+                    </div>
+                </section>
+                <div class="navigation d-flex justify-content-center mt-4">
+                    {{ knp_pagination_render(formations) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ***** Chefs Area Ends ***** -->
+
+{% include "footer.html.twig" %} {% endblock %}
