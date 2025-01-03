@@ -2,11 +2,15 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Client;
+use App\Entity\ClientContact;
+use App\Entity\ClientFacture;
 use App\Entity\Formation;
 use App\Entity\Invoice;
 use App\Entity\Order;
 use App\Entity\OrderDetails;
 use App\Entity\Product;
+use App\Entity\Service;
 use App\Entity\Transport;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -54,11 +58,15 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Produits', 'fas fa-list', Product::class);
         yield MenuItem::linkToCrud('Formations', 'fas fa-list', Formation::class);
-        yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-list', User::class);
-        yield MenuItem::linkToCrud('Livraison', 'fas fa-list', Transport::class);
+        yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-user', User::class);
+        yield MenuItem::linkToCrud('Livraison', 'fas fa-truck', Transport::class);
         yield MenuItem::linkToCrud('Commandes', 'fas fa-shopping-cart', Order::class);
         yield MenuItem::linkToCrud('Commande Details', 'fas fa-list', OrderDetails::class);
-        yield MenuItem::linkToCrud('Factures', 'fas fa-list', Invoice::class);
+        yield MenuItem::linkToCrud('Factures', 'fas fa-file-invoice', Invoice::class);
+        yield MenuItem::linkToCrud('Clients', 'fas fa-building', Client::class);
+        yield MenuItem::linkToCrud('Contacts de Client', 'fas fa-address-book', ClientContact::class);
+        yield MenuItem::linkToCrud('Factures de Client', 'fas fa-file-invoice', ClientFacture::class);
+        yield MenuItem::linkToCrud('Mes Services', 'fas fa-book-open', Service::class);
 
     }
 }

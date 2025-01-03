@@ -44,7 +44,7 @@ class InvoiceCrudController extends AbstractCrudController
                 ->onlyOnIndex(),
             AssociationField::new('user', 'User')
                 ->onlyOnIndex(),
-            BooleanField::new('isPdf', 'Is PDF Generated'),
+            BooleanField::new('isPdf', 'Is PDF Generated')->onlyOnIndex(),
             UrlField::new('pdfPath', 'PDF File')
                 ->setLabel('View PDF')
                 ->formatValue(static function (?string $value) {
